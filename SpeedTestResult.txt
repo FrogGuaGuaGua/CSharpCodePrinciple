@@ -1,0 +1,33 @@
+﻿Debug: 
+
+sum=475065413593153024
+IntMultiDivide: 0.895s
+sum=475065413593153024
+IntLeftRightShift: 0.662s
+
+sum=27904761823810656
+DoubleDivide: 1.767s
+sum=27904761823810656
+DoubleMulti: 1.765s
+
+sum=-255681207063415.5
+DonotStoreResult: 5.768s
+sum=-255681207063415.53
+StoreResult: 3.460s
+--------------------------
+Release:
+
+sum=475065413593153024
+IntMultiDivide: 0.556s
+sum=475065413593153024
+IntLeftRightShift: 0.482s
+
+sum=27904761823810656
+DoubleDivide: 1.591s
+sum=27904761823810656
+DoubleMulti: 1.283s
+
+sum=-255681207063415.5
+DonotStoreResult: 2.781s
+sum=-255681207063415.53
+StoreResult: 2.789s
