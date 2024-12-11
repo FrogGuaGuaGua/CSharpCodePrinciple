@@ -6,12 +6,13 @@ class SpeedTest
 {
     static void Main()
     {
-        int N = 400_000_000;
+        int N = 40_000_000;
         MeasureExecutionTime(() => IntMultiDivide(N), nameof(IntMultiDivide));
         MeasureExecutionTime(() => IntLeftRightShift(N), nameof(IntLeftRightShift));
         Console.WriteLine();
         MeasureExecutionTime(() => DoubleDivide(N), nameof(DoubleDivide));
         MeasureExecutionTime(() => DoubleMulti(N), nameof(DoubleMulti));
+        MeasureExecutionTime(() => FloatMulti(N), nameof(FloatMulti));       
         Console.WriteLine();
         MeasureExecutionTime(() => DonotStoreResult(N), nameof(DonotStoreResult));
         MeasureExecutionTime(() => StoreResult(N), nameof(StoreResult));
@@ -101,6 +102,26 @@ class SpeedTest
             f = i * 0.14285714285714285;
             g = i * 0.125;
             h = i * 0.1;
+            sum = sum + a + b + c - d - e - f - g - h;
+        }
+        Console.WriteLine($"sum={sum}");
+    }
+    static void FloatMulti(float N)
+    {
+        float sum = 0.0f;
+        float a, b, c, d, e, f, g, h;
+        // 下面for循环中i如果定义成float，那么达到16777216时，
+        // 会由于精度问题，无法自增1，导致死循环
+        for (int i = 0; i < N; i++)
+        {
+            a = i * 0.5f;
+            b = i * 0.33333333333333333f;
+            c = i * 0.25f;
+            d = i * 0.2f;
+            e = i * 0.16666666666666666f;
+            f = i * 0.14285714285714285f;
+            g = i * 0.125f;
+            h = i * 0.1f;
             sum = sum + a + b + c - d - e - f - g - h;
         }
         Console.WriteLine($"sum={sum}");

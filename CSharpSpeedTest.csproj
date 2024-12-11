@@ -9,7 +9,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Include="CSharpCodePrinciple.md" />
+    <None Remove="CSharpCodePrinciple.md" />
   </ItemGroup>
 
 </Project>
