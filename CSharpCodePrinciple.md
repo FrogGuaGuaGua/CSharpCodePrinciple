@@ -127,7 +127,8 @@ public void SetEnvelope (double minx, double miny, double maxx, double maxy)
 } 
 ```
 常见的反义词组  
-> add/remove begin/end create/destory insert/delete first/last get/release increment/decrement put/get add/delete lock/unlock open/close
+> add/remove begin/end create/destory insert/delete first/last get/release 
+increment/decrement put/get add/delete lock/unlock open/close
 > min/max old/new start/stop next/previous source/target show/hide 
 send/receive cut/paste up/down source/destination  
 
@@ -358,7 +359,7 @@ public    float  test3 = 0.3F;
 *
 *********************************************************************
 * FileName:DBHelper
-* Author：Jason Young <genyong.yang@gmail.com> 
+* Author：xxx xxxx <xxx.xxx@xx.com> 
 * Create Date: 2018/7/16 15:44:40
 * Version: Version 1.0.0
 * Description:数据库操作类
@@ -497,7 +498,7 @@ public void FireEvent()
 }
 }
 ```
-【推荐】不要提供 public的事件成员变量，而是使用事件访问器。例如：  
+【推荐】不要提供 public 的事件成员变量，而是使用事件访问器。例如：  
 ```C#
 public class MySource 
 { 
@@ -547,27 +548,28 @@ public class MyClass
 ```
 ## 3 异常  
 【强制】不使用异常实现来控制程序流程结构。  
-【推荐】优先考虑使用System命名空间中已有的异常，避免使用自定义的异常类。  
+【推荐】优先考虑使用 System 命名空间中已有的异常，避免使用自定义的异常类。  
 【推荐】应该使用最合理的，最具针对性的异常。  
 【推荐】自定义异常类时： 
-	从ApplicationException继承。  
-	提供自定义的序列化。  
-	避免太深的继承层次。  
+> 从 ApplicationException 继承。  
+> 提供自定义的序列化。  
+> 避免太深的继承层次。  
+
 【推荐】catch语句中，总是抛出最初异常以保持最初错误的堆栈位置。
-	```
-	catch(Exception exception)
-	{  
+```C#
+catch(Exception exception)
+{  
 	MessageBox.Show(exception.Message); 
 	throw; //Same as throw exception;
-	}
-	``` 
+}
+``` 
 【推荐】仅捕获已经显式处理了的异常。  
 【推荐】避免将错误代码作为方法的返回值。  
 【推荐】对应用程序进行日志和跟踪。  
 
 
 参考资料：  
-[C# 编码规范手册](https://zhuanlan.zhihu.com/p/663255342)  
+[知乎 C# 编码规范手册](https://zhuanlan.zhihu.com/p/663255342)  
 [Microsoft C# 标识符命名规则和约定](https://learn.microsoft.com/zh-cn/dotnet/csharp/fundamentals/coding-style/identifier-names)  
 [Microsoft C# 代码约定](https://learn.microsoft.com/zh-cn/dotnet/csharp/fundamentals/coding-style/coding-conventions)  
 [Microsoft .NET 框架设计准则](https://learn.microsoft.com/zh-cn/dotnet/standard/design-guidelines/)
