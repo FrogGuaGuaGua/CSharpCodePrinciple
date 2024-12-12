@@ -12,10 +12,11 @@ class SpeedTest
         Console.WriteLine();
         MeasureExecutionTime(() => DoubleDivide(N), nameof(DoubleDivide));
         MeasureExecutionTime(() => DoubleMulti(N), nameof(DoubleMulti));
-        MeasureExecutionTime(() => FloatMulti(N), nameof(FloatMulti));       
+        MeasureExecutionTime(() => FloatMulti(N), nameof(FloatMulti));
         Console.WriteLine();
         MeasureExecutionTime(() => DonotStoreResult(N), nameof(DonotStoreResult));
         MeasureExecutionTime(() => StoreResult(N), nameof(StoreResult));
+        MeasureExecutionTime(() => StoreResultFloat(N), nameof(StoreResultFloat));
     }
 
     static void MeasureExecutionTime(Action testFunction, string functionName)
@@ -106,11 +107,11 @@ class SpeedTest
         }
         Console.WriteLine($"sum={sum}");
     }
-    static void FloatMulti(float N)
+    static void FloatMulti(int N)
     {
         float sum = 0.0f;
         float a, b, c, d, e, f, g, h;
-        // 下面for循环中i如果定义成float，那么达到16777216时，
+        // 下面for循环中的i如果定义成float，那么达到16777216时，
         // 会由于精度问题，无法自增1，导致死循环
         for (int i = 0; i < N; i++)
         {
@@ -233,6 +234,67 @@ class SpeedTest
             x1 = b + c;
             x2 = b - c;
             sum = sum + 1.1 * x1 + 1.2 * x2;
+        }
+        Console.WriteLine($"sum={sum}");
+    }
+
+    static void StoreResultFloat(int N)
+    {
+        float sum = 0.0f;
+        float x, y, z, a, b, c, d, e, f, delta, det, x1, x2;
+        float cosi, sini;
+        float cos2 = (float)Cos(2), sin2 = (float)Sin(2);
+        for (int i = 10; i < (int)(N * 0.2); i++)
+        {
+            // 二维坐标旋转
+            cosi = (float)Cos(i);
+            sini = (float)Sin(i);
+            x = 2.0f * cosi - 3.0f * sini;
+            y = 2.0f * sini + 3.0f * cosi;
+            sum = sum + x + y;
+
+            // 球坐标化直角坐标
+            sini = 1.5f * ((float)Sin(i * 0.1f));
+            x = sini * cos2;
+            y = sini * sin2;
+            z = 1.5f * ((float)Cos(i * 0.1f));
+            sum = sum + x + y + z;
+
+            // 计算二元一次方程组的解
+            // a * x1 + b * x2 = e
+            // c * x1 + d * x2 = f
+            a = (float) Log(i + 1.0) + 1.0f;
+            b = i;
+            c = z;
+            d = i / (i + 1.0f);
+            e = i * 0.001f;
+            f = 2.0f * e + 1.0f;
+
+            det = a * d - b * c; // 行列式
+            if (Abs(det) < 1e-5)
+            {
+                det = det + 1.0f; // 此处直接加1是为了方便编程，真实场景不能这样做
+            }
+            det = 1.0f / det;
+            e = e * det;
+            f = f * det;
+            x1 = d * e - b * f;
+            x2 = -c * e + a * f;
+            sum = sum + x1 + x2;
+
+            //  计算二次方程 ax^2+bx+c=0的解，a,b,c沿用前面的值
+            b = b * 0.5f;
+            delta = b * b - a * c;
+            if (delta < 0.0f)
+            {
+                delta = -delta; // 此处直接反号是为了方便编程，真实场景不能这样做
+            }
+            a = 1.0f / a;
+            b = -b * a;
+            c = (float) Sqrt(delta) * a;
+            x1 = b + c;
+            x2 = b - c;
+            sum = sum + 1.1f * x1 + 1.2f * x2;
         }
         Console.WriteLine($"sum={sum}");
     }

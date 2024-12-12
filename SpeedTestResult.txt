@@ -1,33 +1,88 @@
-﻿Debug: 
+﻿N = 40_000_000;
+
+Debug:
+
+sum=-900000020000000
+IntMultiDivide: 0.090s
+sum=-900000020000000
+IntLeftRightShift: 0.067s
+
+sum=279047612071428.5
+DoubleDivide: 0.201s
+sum=279047612071428.5
+DoubleMulti: 0.188s
+sum=8.925368E+13
+FloatMulti: 0.174s
+
+sum=-2327753503292.9575
+DonotStoreResult: 0.402s
+sum=-2327753503292.957
+StoreResult: 0.243s
+sum=-2.3558291E+12
+StoreResultFloat: 0.278s
+
+Release:
+
+sum=-900000020000000
+IntMultiDivide: 0.068s
+sum=-900000020000000
+IntLeftRightShift: 0.048s
+
+sum=279047612071428.5
+DoubleDivide: 0.159s
+sum=279047612071428.5
+DoubleMulti: 0.126s
+sum=8.925368E+13
+FloatMulti: 0.130s
+
+sum=-2327753503292.9575
+DonotStoreResult: 0.203s
+sum=-2327753503292.957
+StoreResult: 0.194s
+sum=-2.3558291E+12
+StoreResultFloat: 0.268s
+
+---------------------------------------------------------------------
+N = 400_000_000;
+
+Debug: 
 
 sum=475065413593153024
-IntMultiDivide: 0.895s
+IntMultiDivide: 0.877s
 sum=475065413593153024
-IntLeftRightShift: 0.662s
+IntLeftRightShift: 0.658s
 
 sum=27904761823810656
-DoubleDivide: 1.767s
+DoubleDivide: 1.820s
 sum=27904761823810656
-DoubleMulti: 1.765s
+DoubleMulti: 1.755s
+sum=4.5035996E+15
+FloatMulti: 1.744s
 
 sum=-255681207063415.5
-DonotStoreResult: 5.768s
+DonotStoreResult: 5.829s
 sum=-255681207063415.53
-StoreResult: 3.460s
+StoreResult: 3.393s
+sum=-1.9641186E+14
+StoreResultFloat: 3.723s
 --------------------------
 Release:
 
 sum=475065413593153024
-IntMultiDivide: 0.556s
+IntMultiDivide: 0.569s
 sum=475065413593153024
-IntLeftRightShift: 0.482s
+IntLeftRightShift: 0.478s
 
 sum=27904761823810656
-DoubleDivide: 1.591s
+DoubleDivide: 1.604s
 sum=27904761823810656
 DoubleMulti: 1.283s
+sum=4.5035996E+15
+FloatMulti: 1.270s
 
 sum=-255681207063415.5
-DonotStoreResult: 2.781s
+DonotStoreResult: 2.797s
 sum=-255681207063415.53
-StoreResult: 2.789s
+StoreResult: 2.778s
+sum=-1.9641186E+14
+StoreResultFloat: 3.801s
