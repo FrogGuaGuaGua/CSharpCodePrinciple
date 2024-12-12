@@ -17,6 +17,9 @@ class SpeedTest
         MeasureExecutionTime(() => DonotStoreResult(N), nameof(DonotStoreResult));
         MeasureExecutionTime(() => StoreResult(N), nameof(StoreResult));
         MeasureExecutionTime(() => StoreResultFloat(N), nameof(StoreResultFloat));
+        Console.WriteLine();
+        MeasureExecutionTime(() => FloorCeilRound(N), nameof(FloorCeilRound));
+        MeasureExecutionTime(() => IntFloorCeilRound(N), nameof(IntFloorCeilRound));
     }
 
     static void MeasureExecutionTime(Action testFunction, string functionName)
@@ -263,7 +266,7 @@ class SpeedTest
             // 计算二元一次方程组的解
             // a * x1 + b * x2 = e
             // c * x1 + d * x2 = f
-            a = (float) Log(i + 1.0) + 1.0f;
+            a = (float)Log(i + 1.0) + 1.0f;
             b = i;
             c = z;
             d = i / (i + 1.0f);
@@ -291,11 +294,50 @@ class SpeedTest
             }
             a = 1.0f / a;
             b = -b * a;
-            c = (float) Sqrt(delta) * a;
+            c = (float)Sqrt(delta) * a;
             x1 = b + c;
             x2 = b - c;
             sum = sum + 1.1f * x1 + 1.2f * x2;
         }
         Console.WriteLine($"sum={sum}");
     }
+
+    static void FloorCeilRound(int N)
+    {
+        long sum = 0;
+        double t;
+        int a, b, c;
+        for (int i = -N; i < N; i++)
+        {
+            t = i * 0.1;
+            a = (int)Floor(t);
+            b = (int)Ceiling(t);
+            // (int)Round(t)相当于(int)Round(t, MidpointRounding.ToEven)，与ToZero行为不同
+            c = (int)Round(t, MidpointRounding.ToZero);
+            sum = sum + a + b - c;
+        }
+        Console.WriteLine($"sum={sum}");
+    }
+    static void IntFloorCeilRound(int N)
+    {
+        long sum = 0;
+        double t;
+        int a, b, c;
+        for (int i = -N; i < N; i++)
+        {
+            t = i * 0.1;
+            // 替代 a = (int)Math.Floor(t)
+            a = (t < 0 ? (int)t - 1 : (int)t);
+
+            // 替代 b = (int)Math.Ceiling(t)
+            b = (t < 0 ? (int)t : (int)t + 1);
+
+            // 替代 c = (int)Math.Round(t, MidpointRounding.ToZero)
+            c = (t < 0 ? (int)(t - 0.5) : (int)(t + 0.5));
+
+            sum = sum + a + b - c;
+        }
+        Console.WriteLine($"sum={sum}");
+    }
+
 }
