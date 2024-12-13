@@ -1,25 +1,35 @@
 ﻿using System;
 using System.Diagnostics;
 using static System.Math;
+using MathNet.Numerics;
+using System.Numerics;
 
 class SpeedTest
 {
+    static readonly int[] Factorial = [1, 1, 2, 6, 24, 120, 720, 5040, 40320, 362880, 3628800, 39916800, 479001600];
+    static readonly long[] FactorialL = [1L, 1L, 2L, 6L, 24L, 120L, 720L, 5040L, 40320L, 362880L, 3628800L, 39916800L,
+                                  479001600L, 6227020800L, 87178291200L, 1307674368000L, 20922789888000L,
+                                  355687428096000L, 6402373705728000L, 121645100408832000L, 2432902008176640000L];
     static void Main()
     {
-        int N = 40_000_000;
-        MeasureExecutionTime(() => IntMultiDivide(N), nameof(IntMultiDivide));
-        MeasureExecutionTime(() => IntLeftRightShift(N), nameof(IntLeftRightShift));
-        Console.WriteLine();
-        MeasureExecutionTime(() => DoubleDivide(N), nameof(DoubleDivide));
-        MeasureExecutionTime(() => DoubleMulti(N), nameof(DoubleMulti));
-        MeasureExecutionTime(() => FloatMulti(N), nameof(FloatMulti));
-        Console.WriteLine();
-        MeasureExecutionTime(() => DonotStoreResult(N), nameof(DonotStoreResult));
-        MeasureExecutionTime(() => StoreResult(N), nameof(StoreResult));
-        MeasureExecutionTime(() => StoreResultFloat(N), nameof(StoreResultFloat));
-        Console.WriteLine();
-        MeasureExecutionTime(() => FloorCeilRound(N), nameof(FloorCeilRound));
-        MeasureExecutionTime(() => IntFloorCeilRound(N), nameof(IntFloorCeilRound));
+        int N = 30_000_000;
+        //MeasureExecutionTime(() => IntMultiDivide(N), nameof(IntMultiDivide));
+        //MeasureExecutionTime(() => IntLeftRightShift(N), nameof(IntLeftRightShift));
+        //Console.WriteLine();
+        //MeasureExecutionTime(() => DoubleDivide(N), nameof(DoubleDivide));
+        //MeasureExecutionTime(() => DoubleMulti(N), nameof(DoubleMulti));
+        //MeasureExecutionTime(() => FloatMulti(N), nameof(FloatMulti));
+        //Console.WriteLine();
+        //MeasureExecutionTime(() => DonotStoreResult(N), nameof(DonotStoreResult));
+        //MeasureExecutionTime(() => StoreResult(N), nameof(StoreResult));
+        //MeasureExecutionTime(() => StoreResultFloat(N), nameof(StoreResultFloat));
+        //Console.WriteLine();
+        //MeasureExecutionTime(() => FloorCeilRound(N), nameof(FloorCeilRound));
+        //MeasureExecutionTime(() => IntFloorCeilRound(N), nameof(IntFloorCeilRound));
+        //Console.WriteLine();
+        MeasureExecutionTime(() => TestQuadratic(N), nameof(TestQuadratic));
+        MeasureExecutionTime(() => TestMyQuadratic(N), nameof(TestMyQuadratic));
+
     }
 
     static void MeasureExecutionTime(Action testFunction, string functionName)
@@ -340,4 +350,71 @@ class SpeedTest
         Console.WriteLine($"sum={sum}");
     }
 
+    static (Complex, Complex) MyQuadratic(double c, double b, double a)
+    {
+        Complex x1, x2;
+        if (a == 0.0)
+        {
+            if (b == 0.0)
+            {
+                x1 = Complex.NaN;
+                x2 = Complex.NaN;
+            }
+            else
+            {
+                x1 = new Complex(-c / b, 0.0);
+                x2 = x1;
+            }
+        }
+        else
+        {
+            a = 1.0 / a;
+            b = -0.5 * b * a;
+            c = c * a;
+            double delta = b * b - c;
+            double sqrtDelta = Math.Sqrt(Math.Abs(delta));
+            if (delta < 0.0)
+            {
+                x1 = new Complex(b, sqrtDelta);
+                x2 = new Complex(b, -sqrtDelta);
+            }
+            else
+            {
+                x1 = new Complex(b + sqrtDelta, 0.0);
+                x2 = new Complex(b - sqrtDelta, 0.0);
+            }
+        }
+        return (x1, x2);
+    }
+
+    static void TestQuadratic(int N)
+    {
+        Complex x1, x2;
+        double sum = 0.0;
+        double a, b, c;
+        for (int i = 11; i < N; i++)
+        {
+            a = -0.1 * i + 1;
+            b = 0.3464 * i + 5;
+            c = -0.3 * i + 7;
+            (x1, x2) = FindRoots.Quadratic(c, b, a);
+            sum = sum + x1.Real + x2.Imaginary;
+        }
+        Console.WriteLine($"sum={sum}");
+    }
+    static void TestMyQuadratic(int N)
+    {
+        Complex x1, x2;
+        double sum = 0.0;
+        double a, b, c;
+        for (int i = 11; i < N; i++)
+        {
+            a = -0.1 * i + 1;
+            b = 0.3464 * i + 5;
+            c = -0.3 * i + 7;
+            (x1, x2) = MyQuadratic(c, b, a);
+            sum = sum + x1.Real + x2.Imaginary;
+        }
+        Console.WriteLine($"sum={sum}");
+    }
 }
