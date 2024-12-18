@@ -12,7 +12,7 @@ class SpeedTest
                                   355687428096000L, 6402373705728000L, 121645100408832000L, 2432902008176640000L];
     static void Main()
     {
-        int N = 30_000_000;
+        int N = 300_000_000;
         //MeasureExecutionTime(() => IntMultiDivide(N), nameof(IntMultiDivide));
         //MeasureExecutionTime(() => IntLeftRightShift(N), nameof(IntLeftRightShift));
         //Console.WriteLine();
@@ -27,9 +27,33 @@ class SpeedTest
         //MeasureExecutionTime(() => FloorCeilRound(N), nameof(FloorCeilRound));
         //MeasureExecutionTime(() => IntFloorCeilRound(N), nameof(IntFloorCeilRound));
         //Console.WriteLine();
-        MeasureExecutionTime(() => TestQuadratic(N), nameof(TestQuadratic));
-        MeasureExecutionTime(() => TestMyQuadratic(N), nameof(TestMyQuadratic));
+        //MeasureExecutionTime(() => TestQuadratic(N), nameof(TestQuadratic));
+        //MeasureExecutionTime(() => TestMyQuadratic(N), nameof(TestMyQuadratic));
+        //Console.WriteLine();
 
+        int n1 = 541;
+        MeasureExecutionTime(() => TestBinomial(n1), nameof(TestBinomial));
+        MeasureExecutionTime(() => TestMyBinomial(n1), nameof(TestMyBinomial));
+
+        //for (int i = 1; i < 300; i++)
+        //{
+        //    for (int j = 0; j <= i; j++)
+        //    {
+        //        double diff = Math.Abs(MyBinomial(i, j) - SpecialFunctions.Binomial(i, j));
+        //        if (diff > 1e-8)
+        //        {
+        //            Console.WriteLine($"not equal:{i},{j},diff:{diff}");
+        //        }
+        //    }
+        //}
+
+        //Console.WriteLine($"{MyBinomial(297, 5)},{SpecialFunctions.Binomial(297,5)}");
+        //Console.WriteLine($"{MyBinomial(297, 6)},{SpecialFunctions.Binomial(297,6)}");
+        //Console.WriteLine($"{MyBinomial(297, 7)},{SpecialFunctions.Binomial(297,7)}");
+        //Console.WriteLine($"{MyBinomial(297, 8)},{SpecialFunctions.Binomial(297,8)}");
+        //Console.WriteLine($"{MyBinomial(297, 9)},{SpecialFunctions.Binomial(297,9)}");
+        //Console.WriteLine($"{MyBinomial(297, 10)},{SpecialFunctions.Binomial(297,10)}");
+        //Console.WriteLine($"{MyBinomial(297, 11)},{SpecialFunctions.Binomial(297,11)}");
     }
 
     static void MeasureExecutionTime(Action testFunction, string functionName)
@@ -328,6 +352,7 @@ class SpeedTest
         }
         Console.WriteLine($"sum={sum}");
     }
+
     static void IntFloorCeilRound(int N)
     {
         long sum = 0;
@@ -357,8 +382,8 @@ class SpeedTest
         {
             if (b == 0.0)
             {
-                x1 = Complex.NaN;
-                x2 = Complex.NaN;
+                x1 = Complex.Zero / Complex.Zero;  // Complex.NaN;
+                x2 = x1;
             }
             else
             {
@@ -372,14 +397,16 @@ class SpeedTest
             b = -0.5 * b * a;
             c = c * a;
             double delta = b * b - c;
-            double sqrtDelta = Math.Sqrt(Math.Abs(delta));
+            double sqrtDelta;
             if (delta < 0.0)
             {
+                sqrtDelta = Math.Sqrt(-delta);
                 x1 = new Complex(b, sqrtDelta);
                 x2 = new Complex(b, -sqrtDelta);
             }
             else
             {
+                sqrtDelta = Math.Sqrt(delta);
                 x1 = new Complex(b + sqrtDelta, 0.0);
                 x2 = new Complex(b - sqrtDelta, 0.0);
             }
@@ -402,6 +429,7 @@ class SpeedTest
         }
         Console.WriteLine($"sum={sum}");
     }
+
     static void TestMyQuadratic(int N)
     {
         Complex x1, x2;
@@ -414,6 +442,61 @@ class SpeedTest
             c = -0.3 * i + 7;
             (x1, x2) = MyQuadratic(c, b, a);
             sum = sum + x1.Real + x2.Imaginary;
+        }
+        Console.WriteLine($"sum={sum}");
+    }
+
+    static double MyBinomial(int n, int k)
+    {
+        if (k < 0 || n < 0 || k > n)
+        {
+            return double.NaN;
+        }
+        else if (k == 0 || k == n)
+        {
+            return 1.0;
+        }
+        else
+        {
+            if (k > (n >> 1))
+            {
+                k = n - k;
+            }
+            double dblN = n;
+            double dblK = k;
+            double Cnk = dblN / dblK;
+            for (double i = 1.0; i < dblK; i++)
+            {
+                Cnk = Cnk * (dblN - i) / (dblK - i);
+            }
+            return Math.Round(Cnk);
+        }
+    }
+
+    static void TestBinomial(int N)
+    {
+        double sum = 0.0;
+        for (int i = 120; i < N; i++)
+        {
+            for (int j = 100; j <= i; j++)
+            {
+                sum = sum + SpecialFunctions.Binomial(i, j);
+            }
+            sum = sum - Math.Pow(2, i);
+        }
+        Console.WriteLine($"sum={sum}");
+    }
+
+    static void TestMyBinomial(int N)
+    {
+        double sum = 0.0;
+        for (int i = 120; i < N; i++)
+        {
+            for (int j = 100; j <= i; j++)
+            {
+                sum = sum + MyBinomial(i, j);
+            }
+            sum = sum - Math.Pow(2, i);
         }
         Console.WriteLine($"sum={sum}");
     }
