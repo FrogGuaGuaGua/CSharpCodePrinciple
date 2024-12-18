@@ -12,7 +12,7 @@ class SpeedTest
                                   355687428096000L, 6402373705728000L, 121645100408832000L, 2432902008176640000L];
     static void Main()
     {
-        int N = 300_000_000;
+        int N = 30_000_000;
         //MeasureExecutionTime(() => IntMultiDivide(N), nameof(IntMultiDivide));
         //MeasureExecutionTime(() => IntLeftRightShift(N), nameof(IntLeftRightShift));
         //Console.WriteLine();
@@ -34,6 +34,9 @@ class SpeedTest
         int n1 = 541;
         MeasureExecutionTime(() => TestBinomial(n1), nameof(TestBinomial));
         MeasureExecutionTime(() => TestMyBinomial(n1), nameof(TestMyBinomial));
+        Console.WriteLine();
+        MeasureExecutionTime(() => TestMathExp(N), nameof(TestMathExp));
+        MeasureExecutionTime(() => TestFastExp(N), nameof(TestFastExp));
 
         //for (int i = 1; i < 300; i++)
         //{
@@ -500,4 +503,33 @@ class SpeedTest
         }
         Console.WriteLine($"sum={sum}");
     }
+
+    public static double FastExp(double x)
+    {
+        long tmp = (long)(1512775 * x + 1072632447);
+        return BitConverter.Int64BitsToDouble(tmp << 32);
+    }
+
+    static void TestMathExp(double N)
+    {
+        double sum = 0.0, x;
+        for (double i = 0.0; i < N; i++)
+        {
+            x = i * 0.000001;
+            sum = sum + Exp(x) - Exp(x - 0.0001);
+        }
+        Console.WriteLine($"sum={sum}");
+    }
+
+    static void TestFastExp(double N)
+    {
+        double sum = 0.0, x;
+        for (double i = 0.0; i < N; i++)
+        {
+            x = i * 0.000001;
+            sum = sum + FastExp(x) - FastExp(x - 0.0001);
+        }
+        Console.WriteLine($"sum={sum}");
+    }
+
 }
