@@ -37,10 +37,10 @@
 100. 尽量避免编写含递归调用的函数。比如阶乘函数$n!$，递推数列(斐波那契数列、汉诺塔问题等)，二分查找等，均可以用循环替代递归。
 
 110. 对于那些参数的允许范围比较小的函数，优先考虑用查表法实现。比如阶乘函数$n!$，因为阶乘函数增长太快，在大多数情况下，阶乘函数允许的参数的范围很小，
-    $13!>2^{32} = 4294967296 $ = uint.MaxValue
-	$21!>2^{64} = 18446744073709551616 $ = ulong.MaxValue
-	$35!>2^{128} = 3.403\times 10^{38} $ = float.MaxValue
-	$171!>2^{1024} = 1.798\times 10^{308}$ = double.MaxValue
+    $13! = 6227020800 >2^{32} = 4294967296 $ = uint.MaxValue
+	$21!=5.109\times 10^{19}>2^{64} = 1.845\times 10^{19} $ = ulong.MaxValue
+	$35!=1.033\times 10^{40}>2^{128} = 3.403\times 10^{38} $ = float.MaxValue
+	$171!=1.241\times 10^{309}>2^{1024} = 1.798\times 10^{308}$ = double.MaxValue
 至多占用171*8=1368Byte的存储空间，就能满足double型计算的需求。不仅速度快，而且没有多次浮点乘法带来的累积误差。
 特殊情况下，指数函数的自变量如果只能取正整数，那么自变量的范围一般也不会很大，比如 $ e^{709} < 2^{1024} < e^{710} $，那么可以考虑对不超过某一阈值的整数采用查表法，超过该阈值则调用标准库。或者为自变量取0、5、10、15、···、705之类的等差数列时的函数值建立数表，然后用几次浮点乘法就能得到0~709内任意整数的函数值。
 二项式系数(组合数)和阶乘的自然对数$\ln(n!)$也可以采用部分查表法。
@@ -52,8 +52,7 @@ public static double FastExp(double x) {
     return BitConverter.Int64BitsToDouble(tmp << 32);  
 }
 ```
-原理参见[A Fast, Compact Approximation of the Exponential Function](https://nic.schraudolph.org/pubs/Schraudolph99.pdf).
-对于神经网络中的Sigmoid函数中的指数函数，就可以采用这种近似算法。
+原理参见[A Fast, Compact Approximation of the Exponential Function](https://nic.schraudolph.org/pubs/Schraudolph99.pdf). 对于神经网络中的Sigmoid函数中的指数函数，就可以采用这种近似算法。
 
 13.  免费的数学库推荐ALGLIB免费版，收费的数学库推荐ALGLIB、ILNumerics和Dew.Math. 不推荐 MathNET Numerics，其代码质量低下，原因参见[点评10多个C#的数学库](https://zhuanlan.zhihu.com/p/12783824787).
 

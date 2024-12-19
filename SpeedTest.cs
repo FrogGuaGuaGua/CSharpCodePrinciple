@@ -2,6 +2,7 @@
 using static System.Math;
 using MathNet.Numerics;
 using System.Numerics;
+using MathNet.Numerics.Random;
 
 class SpeedTest
 {
@@ -14,6 +15,7 @@ class SpeedTest
         int N = 30_000_000;
         MeasureExecutionTime(() => IntMultiDivide(N), nameof(IntMultiDivide));
         MeasureExecutionTime(() => IntLeftRightShift(N), nameof(IntLeftRightShift));
+        MeasureExecutionTime(() => IntLeftRightShiftParallelFor(N), nameof(IntLeftRightShiftParallelFor));
         Console.WriteLine();
         MeasureExecutionTime(() => DoubleDivide(N), nameof(DoubleDivide));
         MeasureExecutionTime(() => DoubleMulti(N), nameof(DoubleMulti));
@@ -36,6 +38,9 @@ class SpeedTest
         Console.WriteLine();
         MeasureExecutionTime(() => TestMathExp(N), nameof(TestMathExp));
         MeasureExecutionTime(() => TestFastExp(N), nameof(TestFastExp));
+        Console.WriteLine();
+        TestMultiplyMatricesSequential(50);
+
 
         //for (int i = 1; i < 300; i++)
         //{
@@ -99,6 +104,23 @@ class SpeedTest
             f = i >> 3;
             sum = sum + a + b - c + d + e + f;
         }
+        return sum;
+    }
+
+    static double IntLeftRightShiftParallelFor(int N)
+    {
+        long sum = 0L;
+        int a, b, c, d, e, f;
+        Parallel.For(0, N, i =>
+        {
+            a = i << 1;
+            b = i << 2;
+            c = i << 3;
+            d = i >> 1;
+            e = i >> 2;
+            f = i >> 3;
+            Interlocked.Add(ref sum, a + b - c + d + e + f);
+        });
         return sum;
     }
 
@@ -530,6 +552,101 @@ class SpeedTest
             sum = sum + FastExp(x) - FastExp(x - 0.0001);
         }
         return sum;
+    }
+
+    static void MultiplyMatricesSequential(double[,] matA, double[,] matB, double[,] result)
+    {
+        int matACols = matA.GetLength(1);
+        int matBCols = matB.GetLength(1);
+        int matARows = matA.GetLength(0);
+
+        for (int i = 0; i < matARows; i++)
+        {
+            for (int j = 0; j < matBCols; j++)
+            {
+                double temp = 0.0;
+                for (int k = 0; k < matACols; k++)
+                {
+                    temp += matA[i, k] * matB[k, j];
+                }
+                result[i, j] = temp;
+            }
+        }
+    }
+
+    // https://learn.microsoft.com/zh-cn/dotnet/standard/parallel-programming/how-to-write-a-simple-parallel-for-loop
+    static void MultiplyMatricesParallel(double[,] matA, double[,] matB, double[,] result)
+    {
+        int matACols = matA.GetLength(1);
+        int matBCols = matB.GetLength(1);
+        int matARows = matA.GetLength(0);
+
+        Parallel.For(0, matARows, i =>
+        {
+            for (int j = 0; j < matBCols; j++)
+            {
+                double temp = 0.0;
+                for (int k = 0; k < matACols; k++)
+                {
+                    temp += matA[i, k] * matB[k, j];
+                }
+                result[i, j] = temp;
+            }
+        }); 
+    }
+
+    static double[,] InitializeMatrix(int rows, int cols)
+    {
+        double[,] matrix = new double[rows, cols];
+
+        Random r = new Random();
+        for (int i = 0; i < rows; i++)
+        {
+            for (int j = 0; j < cols; j++)
+            {
+                matrix[i, j] = r.NextDouble();
+            }
+        }
+        return matrix;
+    }
+
+    static void TestMultiplyMatricesSequential(int N)
+    {
+        int colCount = 180;
+        int rowCount = 2000;
+        int colCount2 = 270;
+        double[,] m1 = InitializeMatrix(rowCount, colCount);
+        double[,] m11 = m1;
+        double[,] m2 = InitializeMatrix(colCount, colCount2);
+        double[,] m22 = m2;
+        double[,] result1 = new double[rowCount, colCount2];
+        double[,] result2 = new double[rowCount, colCount2];
+        double sum = 0.0;
+        Stopwatch stopwatch = new();
+        stopwatch.Start();
+        for (int i = 0; i < (N >> 2); i++)
+        {
+            MultiplyMatricesSequential(m1, m2, result1);
+            m1[0, 0] += 1.0;
+            m2[0, 0] += 1.0;
+            sum += result1[0, 0] + result1[1, 1];
+        }
+        stopwatch.Stop();
+        Console.WriteLine($"sum={sum}");
+        Console.WriteLine($"Sequential: {stopwatch.ElapsedMilliseconds * 0.001:F3}s");
+
+        sum = 0.0;
+        stopwatch.Restart();
+        for (int i = 0; i < (N >> 2); i++)
+        {
+            MultiplyMatricesParallel(m11, m22, result2);
+            m11[0, 0] += 1.0;
+            m22[0, 0] += 1.0;
+            sum += result2[0, 0] + result2[1, 1];
+        }
+        stopwatch.Stop();
+        Console.WriteLine($"sum={sum}");
+        Console.WriteLine($"Parallel: {stopwatch.ElapsedMilliseconds * 0.001:F3}s");
     }
 
 }
