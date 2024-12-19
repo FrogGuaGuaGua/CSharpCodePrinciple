@@ -1,5 +1,4 @@
-﻿using System;
-using System.Diagnostics;
+﻿using System.Diagnostics;
 using static System.Math;
 using MathNet.Numerics;
 using System.Numerics;
@@ -13,23 +12,23 @@ class SpeedTest
     static void Main()
     {
         int N = 30_000_000;
-        //MeasureExecutionTime(() => IntMultiDivide(N), nameof(IntMultiDivide));
-        //MeasureExecutionTime(() => IntLeftRightShift(N), nameof(IntLeftRightShift));
-        //Console.WriteLine();
-        //MeasureExecutionTime(() => DoubleDivide(N), nameof(DoubleDivide));
-        //MeasureExecutionTime(() => DoubleMulti(N), nameof(DoubleMulti));
-        //MeasureExecutionTime(() => FloatMulti(N), nameof(FloatMulti));
-        //Console.WriteLine();
-        //MeasureExecutionTime(() => DonotStoreResult(N), nameof(DonotStoreResult));
-        //MeasureExecutionTime(() => StoreResult(N), nameof(StoreResult));
-        //MeasureExecutionTime(() => StoreResultFloat(N), nameof(StoreResultFloat));
-        //Console.WriteLine();
-        //MeasureExecutionTime(() => FloorCeilRound(N), nameof(FloorCeilRound));
-        //MeasureExecutionTime(() => IntFloorCeilRound(N), nameof(IntFloorCeilRound));
-        //Console.WriteLine();
-        //MeasureExecutionTime(() => TestQuadratic(N), nameof(TestQuadratic));
-        //MeasureExecutionTime(() => TestMyQuadratic(N), nameof(TestMyQuadratic));
-        //Console.WriteLine();
+        MeasureExecutionTime(() => IntMultiDivide(N), nameof(IntMultiDivide));
+        MeasureExecutionTime(() => IntLeftRightShift(N), nameof(IntLeftRightShift));
+        Console.WriteLine();
+        MeasureExecutionTime(() => DoubleDivide(N), nameof(DoubleDivide));
+        MeasureExecutionTime(() => DoubleMulti(N), nameof(DoubleMulti));
+        MeasureExecutionTime(() => FloatMulti(N), nameof(FloatMulti));
+        Console.WriteLine();
+        MeasureExecutionTime(() => DonotStoreResult(N), nameof(DonotStoreResult));
+        MeasureExecutionTime(() => StoreResult(N), nameof(StoreResult));
+        MeasureExecutionTime(() => StoreResultFloat(N), nameof(StoreResultFloat));
+        Console.WriteLine();
+        MeasureExecutionTime(() => FloorCeilRound(N), nameof(FloorCeilRound));
+        MeasureExecutionTime(() => IntFloorCeilRound(N), nameof(IntFloorCeilRound));
+        Console.WriteLine();
+        MeasureExecutionTime(() => TestQuadratic(N), nameof(TestQuadratic));
+        MeasureExecutionTime(() => TestMyQuadratic(N), nameof(TestMyQuadratic));
+        Console.WriteLine();
 
         int n1 = 541;
         MeasureExecutionTime(() => TestBinomial(n1), nameof(TestBinomial));
@@ -59,16 +58,17 @@ class SpeedTest
         //Console.WriteLine($"{MyBinomial(297, 11)},{SpecialFunctions.Binomial(297,11)}");
     }
 
-    static void MeasureExecutionTime(Action testFunction, string functionName)
+    static void MeasureExecutionTime(Func<double> testFunction, string functionName)
     {
         Stopwatch stopwatch = new();
         stopwatch.Start();
-        testFunction();
+        double sum = testFunction();
+        Console.WriteLine($"sum={sum}");
         stopwatch.Stop();
         Console.WriteLine($"{functionName}: {stopwatch.ElapsedMilliseconds * 0.001:F3}s");
     }
 
-    static void IntMultiDivide(int N)
+    static double IntMultiDivide(int N)
     {
         long sum = 0L;
         int a, b, c, d, e, f;
@@ -82,10 +82,10 @@ class SpeedTest
             f = i / 8;
             sum = sum + a + b - c + d + e + f;
         }
-        Console.WriteLine($"sum={sum}");
+        return sum;
     }
 
-    static void IntLeftRightShift(int N)
+    static double IntLeftRightShift(int N)
     {
         long sum = 0L;
         int a, b, c, d, e, f;
@@ -99,10 +99,10 @@ class SpeedTest
             f = i >> 3;
             sum = sum + a + b - c + d + e + f;
         }
-        Console.WriteLine($"sum={sum}");
+        return sum;
     }
 
-    static void DoubleDivide(double N)
+    static double DoubleDivide(double N)
     {
         double sum = 0.0;
         double a, b, c, d, e, f, g, h;
@@ -118,10 +118,10 @@ class SpeedTest
             h = i / 10.0;
             sum = sum + a + b + c - d - e - f - g - h;
         }
-        Console.WriteLine($"sum={sum}");
+        return sum;
     }
 
-    static void DoubleMulti(double N)
+    static double DoubleMulti(double N)
     {
         double sum = 0.0;
         double a, b, c, d, e, f, g, h;
@@ -145,9 +145,9 @@ class SpeedTest
             h = i * 0.1;
             sum = sum + a + b + c - d - e - f - g - h;
         }
-        Console.WriteLine($"sum={sum}");
+        return sum;
     }
-    static void FloatMulti(int N)
+    static double FloatMulti(int N)
     {
         float sum = 0.0f;
         float a, b, c, d, e, f, g, h;
@@ -165,10 +165,10 @@ class SpeedTest
             h = i * 0.1f;
             sum = sum + a + b + c - d - e - f - g - h;
         }
-        Console.WriteLine($"sum={sum}");
+        return sum;
     }
 
-    static void DonotStoreResult(double N)
+    static double DonotStoreResult(double N)
     {
         double sum = 0.0;
         double x, y, z, a, b, c, d, e, f, delta, det, x1, x2;
@@ -214,10 +214,10 @@ class SpeedTest
             x2 = (-b - Sqrt(delta)) / (2.0 * a);
             sum = sum + 1.1 * x1 + 1.2 * x2;
         }
-        Console.WriteLine($"sum={sum}");
+        return sum;
     }
 
-    static void StoreResult(double N)
+    static double StoreResult(double N)
     {
         double sum = 0.0;
         double x, y, z, a, b, c, d, e, f, delta, det, x1, x2;
@@ -275,10 +275,10 @@ class SpeedTest
             x2 = b - c;
             sum = sum + 1.1 * x1 + 1.2 * x2;
         }
-        Console.WriteLine($"sum={sum}");
+        return sum;
     }
 
-    static void StoreResultFloat(int N)
+    static double StoreResultFloat(int N)
     {
         float sum = 0.0f;
         float x, y, z, a, b, c, d, e, f, delta, det, x1, x2;
@@ -336,10 +336,10 @@ class SpeedTest
             x2 = b - c;
             sum = sum + 1.1f * x1 + 1.2f * x2;
         }
-        Console.WriteLine($"sum={sum}");
+        return sum;
     }
 
-    static void FloorCeilRound(int N)
+    static double FloorCeilRound(int N)
     {
         long sum = 0;
         double t;
@@ -353,10 +353,10 @@ class SpeedTest
             c = (int)Round(t, MidpointRounding.ToZero);
             sum = sum + a + b - c;
         }
-        Console.WriteLine($"sum={sum}");
+        return sum;
     }
 
-    static void IntFloorCeilRound(int N)
+    static double IntFloorCeilRound(int N)
     {
         long sum = 0;
         double t;
@@ -375,7 +375,7 @@ class SpeedTest
 
             sum = sum + a + b - c;
         }
-        Console.WriteLine($"sum={sum}");
+        return sum;
     }
 
     static (Complex, Complex) MyQuadratic(double c, double b, double a)
@@ -417,7 +417,7 @@ class SpeedTest
         return (x1, x2);
     }
 
-    static void TestQuadratic(int N)
+    static double TestQuadratic(int N)
     {
         Complex x1, x2;
         double sum = 0.0;
@@ -430,10 +430,10 @@ class SpeedTest
             (x1, x2) = FindRoots.Quadratic(c, b, a);
             sum = sum + x1.Real + x2.Imaginary;
         }
-        Console.WriteLine($"sum={sum}");
+        return sum;
     }
 
-    static void TestMyQuadratic(int N)
+    static double TestMyQuadratic(int N)
     {
         Complex x1, x2;
         double sum = 0.0;
@@ -446,7 +446,7 @@ class SpeedTest
             (x1, x2) = MyQuadratic(c, b, a);
             sum = sum + x1.Real + x2.Imaginary;
         }
-        Console.WriteLine($"sum={sum}");
+        return sum;
     }
 
     static double MyBinomial(int n, int k)
@@ -476,7 +476,7 @@ class SpeedTest
         }
     }
 
-    static void TestBinomial(int N)
+    static double TestBinomial(int N)
     {
         double sum = 0.0;
         for (int i = 120; i < N; i++)
@@ -487,10 +487,10 @@ class SpeedTest
             }
             sum = sum - Math.Pow(2, i);
         }
-        Console.WriteLine($"sum={sum}");
+        return sum;
     }
 
-    static void TestMyBinomial(int N)
+    static double TestMyBinomial(int N)
     {
         double sum = 0.0;
         for (int i = 120; i < N; i++)
@@ -501,7 +501,7 @@ class SpeedTest
             }
             sum = sum - Math.Pow(2, i);
         }
-        Console.WriteLine($"sum={sum}");
+        return sum;
     }
 
     public static double FastExp(double x)
@@ -510,7 +510,7 @@ class SpeedTest
         return BitConverter.Int64BitsToDouble(tmp << 32);
     }
 
-    static void TestMathExp(double N)
+    static double TestMathExp(double N)
     {
         double sum = 0.0, x;
         for (double i = 0.0; i < N; i++)
@@ -518,10 +518,10 @@ class SpeedTest
             x = i * 0.000001;
             sum = sum + Exp(x) - Exp(x - 0.0001);
         }
-        Console.WriteLine($"sum={sum}");
+        return sum;
     }
 
-    static void TestFastExp(double N)
+    static double TestFastExp(double N)
     {
         double sum = 0.0, x;
         for (double i = 0.0; i < N; i++)
@@ -529,7 +529,7 @@ class SpeedTest
             x = i * 0.000001;
             sum = sum + FastExp(x) - FastExp(x - 0.0001);
         }
-        Console.WriteLine($"sum={sum}");
+        return sum;
     }
 
 }
