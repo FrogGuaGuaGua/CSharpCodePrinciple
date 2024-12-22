@@ -12,34 +12,36 @@ class SpeedTest
                                   355687428096000L, 6402373705728000L, 121645100408832000L, 2432902008176640000L];
     static void Main()
     {
-        int N = 30_000_000;
-        MeasureExecutionTime(() => IntMultiDivide(N), nameof(IntMultiDivide));
-        MeasureExecutionTime(() => IntLeftRightShift(N), nameof(IntLeftRightShift));
-        MeasureExecutionTime(() => IntLeftRightShiftParallelFor(N), nameof(IntLeftRightShiftParallelFor));
-        Console.WriteLine();
-        MeasureExecutionTime(() => DoubleDivide(N), nameof(DoubleDivide));
-        MeasureExecutionTime(() => DoubleMulti(N), nameof(DoubleMulti));
-        MeasureExecutionTime(() => FloatMulti(N), nameof(FloatMulti));
-        Console.WriteLine();
-        MeasureExecutionTime(() => DonotStoreResult(N), nameof(DonotStoreResult));
-        MeasureExecutionTime(() => StoreResult(N), nameof(StoreResult));
-        MeasureExecutionTime(() => StoreResultFloat(N), nameof(StoreResultFloat));
-        Console.WriteLine();
-        MeasureExecutionTime(() => FloorCeilRound(N), nameof(FloorCeilRound));
-        MeasureExecutionTime(() => IntFloorCeilRound(N), nameof(IntFloorCeilRound));
-        Console.WriteLine();
-        MeasureExecutionTime(() => TestQuadratic(N), nameof(TestQuadratic));
-        MeasureExecutionTime(() => TestMyQuadratic(N), nameof(TestMyQuadratic));
-        Console.WriteLine();
+        int N = 300_000_000;
+        //MeasureExecutionTime(() => IntMultiDivide(N), nameof(IntMultiDivide));
+        //MeasureExecutionTime(() => IntLeftRightShift(N), nameof(IntLeftRightShift));
+        //MeasureExecutionTime(() => IntLeftRightShiftParallelFor(N), nameof(IntLeftRightShiftParallelFor));
+        //Console.WriteLine();
+        //MeasureExecutionTime(() => DoubleDivide(N), nameof(DoubleDivide));
+        //MeasureExecutionTime(() => DoubleMulti(N), nameof(DoubleMulti));
+        //MeasureExecutionTime(() => FloatMulti(N), nameof(FloatMulti));
+        //Console.WriteLine();
+        //MeasureExecutionTime(() => DonotStoreResult(N), nameof(DonotStoreResult));
+        //MeasureExecutionTime(() => StoreResult(N), nameof(StoreResult));
+        //MeasureExecutionTime(() => StoreResultFloat(N), nameof(StoreResultFloat));
+        //Console.WriteLine();
+        //MeasureExecutionTime(() => FloorCeilRound(N), nameof(FloorCeilRound));
+        //MeasureExecutionTime(() => IntFloorCeilRound(N), nameof(IntFloorCeilRound));
+        //Console.WriteLine();
+        //MeasureExecutionTime(() => TestQuadratic(N), nameof(TestQuadratic));
+        //MeasureExecutionTime(() => TestMyQuadratic(N), nameof(TestMyQuadratic));
+        //Console.WriteLine();
 
-        int n1 = 541;
-        MeasureExecutionTime(() => TestBinomial(n1), nameof(TestBinomial));
-        MeasureExecutionTime(() => TestMyBinomial(n1), nameof(TestMyBinomial));
-        Console.WriteLine();
+        //int n1 = 541;
+        //MeasureExecutionTime(() => TestBinomial(n1), nameof(TestBinomial));
+        //MeasureExecutionTime(() => TestMyBinomial(n1), nameof(TestMyBinomial));
+        //Console.WriteLine();
         MeasureExecutionTime(() => TestMathExp(N), nameof(TestMathExp));
         MeasureExecutionTime(() => TestFastExp(N), nameof(TestFastExp));
         Console.WriteLine();
-        TestMultiplyMatricesSequential(50);
+        MeasureExecutionTime(() => TestMathLn(N), nameof(TestMathLn));
+        MeasureExecutionTime(() => TestFastLn(N), nameof(TestFastLn));
+        //TestMultiplyMatricesSequential(50);
 
 
         //for (int i = 1; i < 300; i++)
@@ -53,6 +55,12 @@ class SpeedTest
         //        }
         //    }
         //}
+
+        for (double i = 1; i < 5; i += 0.1)
+        {
+            Console.WriteLine($"FastLn({i:F3})={FastLn(i)},Math.Log({i:F3})={Math.Log(i)}");
+            //Console.WriteLine($"FastLn({i:F3})-Math.Log({i:F3})={FastLn(i) - Math.Log(i)}");
+        }
 
         //Console.WriteLine($"{MyBinomial(297, 5)},{SpecialFunctions.Binomial(297,5)}");
         //Console.WriteLine($"{MyBinomial(297, 6)},{SpecialFunctions.Binomial(297,6)}");
@@ -526,7 +534,7 @@ class SpeedTest
         return sum;
     }
 
-    public static double FastExp(double x)
+    static double FastExp(double x)
     {
         long tmp = (long)(1512775 * x + 1072632447);
         return BitConverter.Int64BitsToDouble(tmp << 32);
@@ -550,6 +558,34 @@ class SpeedTest
         {
             x = i * 0.000001;
             sum = sum + FastExp(x) - FastExp(x - 0.0001);
+        }
+        return sum;
+    }
+
+    static double FastLn(double x) // 抛弃对x<0的检查。
+    {
+        long longx = BitConverter.DoubleToInt64Bits(x);
+        double k = (longx >> 52) - 1022.5; // k = (longx >> 52) - 1023 + 0.5
+        //   ln(2)=0.693147180559945309
+        return k * 0.693147180559945309;  
+    }
+
+    static double TestMathLn(double N)
+    {
+        double sum = 0.0;
+        for (double i = 0.1; i < N; i++)
+        {
+            sum = sum + Log(i);
+        }
+        return sum;
+    }
+
+    static double TestFastLn(double N)
+    {
+        double sum = 0.0;
+        for (double i = 0.1; i < N; i++)
+        {
+            sum = sum + FastLn(i);
         }
         return sum;
     }
@@ -592,7 +628,7 @@ class SpeedTest
                 }
                 result[i, j] = temp;
             }
-        }); 
+        });
     }
 
     static double[,] InitializeMatrix(int rows, int cols)
