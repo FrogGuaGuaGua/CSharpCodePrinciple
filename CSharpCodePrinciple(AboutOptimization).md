@@ -33,7 +33,9 @@ y'=x\sin\theta+y\cos\theta $$同一个角的正弦和余弦值都要使用两次
 
 8. 对于Array of Struct和Struct of Array两种数据结构，
 
-81. 可以考虑用ref struct代替struct，强制结构体存储在栈上，避免装箱操作，同时减少垃圾回收的性能损失。
+81. 对于较小的结构体，可以考虑用ref struct代替struct，强制结构体存储在栈上(注意防范栈溢出)，避免装箱操作，同时减少垃圾回收的性能损失。
+
+82. 对于局部变量，使用 Span\<T\>, ReadOnlySpan\<T\> 和 stackalloc 在栈上分配连续的小段内存(注意防范栈溢出)，比使用数组(存储在堆上)速度更快。
 
 90. 模式匹配
 
@@ -73,9 +75,14 @@ public static double FastLn(double x) // 抛弃对x<=0的检查。
 150. 避免在循环中做以下事情：
 > * 创建对象。
 > * 使用try catch. 
-> * 打开和关闭同一个文件。
+> * 打开和关闭同一个文件、数据库等。
+> * 创建和断开对同一个URI的链接。
 
 16. 避免不加测试地用Parallel.For代替for循环，因为前者需要创建和管理多个线程，会带来额外的开销。当循环次数太少或者单次循环所做的运算太简单时，使用Parallel.For反而会降低性能，而且很可能出现计算结果不正确的问题。比如函数f(x)在某个区间上做数值积分，有sum+=f(xi)*dx这样的累加运算，需要测试Parallel.For的耗时是否更短以及结果是否正确。
+
+200. 考虑使用[SkipLocalsInit]属性，省略CLR将方法中声明的所有局部变量初始化为其默认值的操作，提高速度。注意：此属性需要 AllowUnsafeBlocks 编译器选项，同时要重点检查代码中是否存在访问未初始化的变量的行为。
+
+
 
  https://www.cnblogs.com/hez2010/p/13724904.html
  https://www.cnblogs.com/blqw/p/3619132.html
