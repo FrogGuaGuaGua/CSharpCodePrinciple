@@ -562,10 +562,11 @@ class SpeedTest
         return sum;
     }
 
-    static double FastLn(double x) // 抛弃对x<0的检查。
+    static double FastLn(double x) // 抛弃对x<=0的检查。
     {
         long longx = BitConverter.DoubleToInt64Bits(x);
-        double k = (longx >> 52) - 1022.5; // k = (longx >> 52) - 1023 + 0.5
+        //     k = (longx >> 52) - 1023 + 0.5
+        double k = (longx >> 52) - 1022.5; 
         //   ln(2)=0.693147180559945309
         return k * 0.693147180559945309;  
     }

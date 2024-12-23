@@ -59,14 +59,14 @@ public static double FastExp(double x) {
 
 13. 以e为底的对数函数有一种快速近似算法：
 ```C#
-public static double FastLn(double x) // 抛弃对x<0的检查。
+public static double FastLn(double x) // 抛弃对x<=0的检查。
 {
 	long longx = BitConverter.DoubleToInt64Bits(x);
 	double k = (longx >> 52) - 1022.5; 
 	return k * 0.693147180559945309;  
 }
 ```
-该方法的速度大致是Math.Log的4倍，原理就是利用IEEE 754浮点数的格式，其中，-1022.5 = - 1023 + 0.5，0.693147……就是$\ln(2)$，而且该算法可以保证绝对误差不超过$\frac{\ln(2)}{2}=0.346573\cdots$. 以2为底或以10为底的对数函数也可以使用该方法，把最后一行与k相乘的常数换掉即可，以2为底就是return k，以10为底就是return k*0.301029995663981196.
+该方法实际上就是Math.Log的算法的前半部分，用位运算提取了IEEE 754浮点数的阶码，而抛弃了尾数的对数，速度大致是Math.Log的4倍，其中，-1022.5 = - 1023 + 0.5，0.693147……就是$\ln(2)$，该算法可以保证绝对误差不超过$\frac{\ln(2)}{2}=0.346573\cdots$. 但该算法有一个不可忽视的弊端：设 $n$ 为正整数，则对于区间$[2^{n-1},2^{n})$内的任意实数，该算法会返回完全一样的结果。以2为底或以10为底的对数函数也可以使用该方法，把最后一行与k相乘的常数换掉即可，以2为底就是return k，以10为底就是return k*0.301029995663981196.
 
 14.  免费的数学库推荐ALGLIB免费版，收费的数学库推荐ALGLIB、ILNumerics和Dew.Math. 不推荐 MathNET Numerics，其代码质量低下，原因参见[点评10多个C#的数学库](https://zhuanlan.zhihu.com/p/12783824787).
 
