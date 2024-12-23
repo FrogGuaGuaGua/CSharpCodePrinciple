@@ -57,15 +57,15 @@ public static double FastExp(double x) {
     return BitConverter.Int64BitsToDouble(tmp << 32);  
 }
 ```
-该方法的速度大致是Math.Exp的5倍，原理参见[A Fast, Compact Approximation of the Exponential Function](https://nic.schraudolph.org/pubs/Schraudolph99.pdf). 对于神经网络中的Sigmoid函数中的指数函数，就可以采用这种近似算法。
+该方法的速度大致是Math.Exp的5倍，原理参见《[A Fast, Compact Approximation of the Exponential Function](https://nic.schraudolph.org/pubs/Schraudolph99.pdf)》. 对于神经网络中的Sigmoid函数中的指数函数，就可以采用这种近似算法。
 
 13. 以e为底的对数函数有一种快速近似算法：
 ```C#
 public static double FastLn(double x) // 抛弃对x<=0的检查。
 {
-	long longx = BitConverter.DoubleToInt64Bits(x);
-	double k = (longx >> 52) - 1022.5; 
-	return k * 0.693147180559945309;  
+    long longx = BitConverter.DoubleToInt64Bits(x);
+    double k = (longx >> 52) - 1022.5; 
+    return k * 0.693147180559945309;  
 }
 ```
 该方法实际上就是Math.Log的算法的前半部分，用位运算提取了IEEE 754浮点数的阶码，而抛弃了尾数的对数，速度大致是Math.Log的4倍，其中，-1022.5 = - 1023 + 0.5，0.693147……就是$\ln(2)$，该算法可以保证绝对误差不超过$\frac{\ln(2)}{2}=0.346573\cdots$. 但该算法有一个不可忽视的弊端：设 $n$ 为正整数，则对于区间$[2^{n-1},2^{n})$内的任意实数，该算法会返回完全一样的结果。以2为底或以10为底的对数函数也可以使用该方法，把最后一行与k相乘的常数换掉即可，以2为底就是return k，以10为底就是return k*0.301029995663981196.
@@ -80,10 +80,10 @@ public static double FastLn(double x) // 抛弃对x<=0的检查。
 
 16. 避免不加测试地用Parallel.For代替for循环，因为前者需要创建和管理多个线程，会带来额外的开销。当循环次数太少或者单次循环所做的运算太简单时，使用Parallel.For反而会降低性能，而且很可能出现计算结果不正确的问题。比如函数f(x)在某个区间上做数值积分，有sum+=f(xi)*dx这样的累加运算，需要测试Parallel.For的耗时是否更短以及结果是否正确。
 
-200. 考虑使用[SkipLocalsInit]属性，省略CLR将方法中声明的所有局部变量初始化为其默认值的操作，提高速度。注意：此属性需要 AllowUnsafeBlocks 编译器选项，同时要重点检查代码中是否存在访问未初始化的变量的行为。
+200. 考虑使用[[SkipLocalsInit](https://learn.microsoft.com/zh-cn/dotnet/csharp/language-reference/attributes/general#skiplocalsinit-attribute)]属性，省略CLR将方法中声明的所有局部变量初始化为其默认值的操作，提高速度。注意：此属性需要 AllowUnsafeBlocks 编译器选项，同时要重点检查代码中是否存在访问未初始化的变量的行为。
 
 
-
- https://www.cnblogs.com/hez2010/p/13724904.html
- https://www.cnblogs.com/blqw/p/3619132.html
+参考文章：
+ * [新版C#高效率编程指南](https://www.cnblogs.com/hez2010/p/13724904.html)
+ * [C#中那些举手之劳的性能优化](https://www.cnblogs.com/blqw/p/3619132.html)
 
