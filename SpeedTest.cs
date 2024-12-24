@@ -10,6 +10,10 @@ class SpeedTest
     static readonly long[] FactorialL = [1L, 1L, 2L, 6L, 24L, 120L, 720L, 5040L, 40320L, 362880L, 3628800L, 39916800L,
                                   479001600L, 6227020800L, 87178291200L, 1307674368000L, 20922789888000L,
                                   355687428096000L, 6402373705728000L, 121645100408832000L, 2432902008176640000L];
+    static readonly byte[] PrimesLessThan255 = [2, 3, 5, 7, 11, 13, 17, 19, 23,
+        29,  31, 37, 41, 43, 47, 53, 59, 61, 67, 71, 73, 79, 83, 89, 97, 101,
+        103, 107, 109, 113, 127, 131, 137, 139, 149, 151,157, 163, 167, 173,
+        179, 181, 191, 193, 197, 199, 211, 223, 227, 229, 233, 239, 241, 251];
     static void Main()
     {
         int N = 300_000_000;
@@ -36,11 +40,11 @@ class SpeedTest
         //MeasureExecutionTime(() => TestBinomial(n1), nameof(TestBinomial));
         //MeasureExecutionTime(() => TestMyBinomial(n1), nameof(TestMyBinomial));
         //Console.WriteLine();
-        MeasureExecutionTime(() => TestMathExp(N), nameof(TestMathExp));
-        MeasureExecutionTime(() => TestFastExp(N), nameof(TestFastExp));
-        Console.WriteLine();
-        MeasureExecutionTime(() => TestMathLn(N), nameof(TestMathLn));
-        MeasureExecutionTime(() => TestFastLn(N), nameof(TestFastLn));
+        //MeasureExecutionTime(() => TestMathExp(N), nameof(TestMathExp));
+        //MeasureExecutionTime(() => TestFastExp(N), nameof(TestFastExp));
+        //Console.WriteLine();
+        //MeasureExecutionTime(() => TestMathLn(N), nameof(TestMathLn));
+        //MeasureExecutionTime(() => TestFastLn(N), nameof(TestFastLn));
         //TestMultiplyMatricesSequential(50);
 
 
@@ -56,11 +60,11 @@ class SpeedTest
         //    }
         //}
 
-        for (double i = 1; i < 5; i += 0.1)
-        {
-            Console.WriteLine($"FastLn({i:F3})={FastLn(i)},Math.Log({i:F3})={Math.Log(i)}");
-            //Console.WriteLine($"FastLn({i:F3})-Math.Log({i:F3})={FastLn(i) - Math.Log(i)}");
-        }
+        //for (double i = 1; i < 5; i += 0.1)
+        //{
+        //    Console.WriteLine($"FastLn({i:F3})={FastLn(i)},Math.Log({i:F3})={Math.Log(i)}");
+        //    //Console.WriteLine($"FastLn({i:F3})-Math.Log({i:F3})={FastLn(i) - Math.Log(i)}");
+        //}
 
         //Console.WriteLine($"{MyBinomial(297, 5)},{SpecialFunctions.Binomial(297,5)}");
         //Console.WriteLine($"{MyBinomial(297, 6)},{SpecialFunctions.Binomial(297,6)}");
@@ -69,6 +73,8 @@ class SpeedTest
         //Console.WriteLine($"{MyBinomial(297, 9)},{SpecialFunctions.Binomial(297,9)}");
         //Console.WriteLine($"{MyBinomial(297, 10)},{SpecialFunctions.Binomial(297,10)}");
         //Console.WriteLine($"{MyBinomial(297, 11)},{SpecialFunctions.Binomial(297,11)}");
+
+        TestPrimeLessThan4294967295();
     }
 
     static void MeasureExecutionTime(Func<double> testFunction, string functionName)
@@ -566,9 +572,9 @@ class SpeedTest
     {
         long longx = BitConverter.DoubleToInt64Bits(x);
         //     k = (longx >> 52) - 1023 + 0.5
-        double k = (longx >> 52) - 1022.5; 
+        double k = (longx >> 52) - 1022.5;
         //   ln(2)=0.693147180559945309
-        return k * 0.693147180559945309;  
+        return k * 0.693147180559945309;
     }
 
     static double TestMathLn(double N)
@@ -684,6 +690,46 @@ class SpeedTest
         stopwatch.Stop();
         Console.WriteLine($"sum={sum}");
         Console.WriteLine($"Parallel: {stopwatch.ElapsedMilliseconds * 0.001:F3}s");
+    }
+
+    static void TestPrimeLessThan4294967295()
+    {
+        uint count = 0;
+        bool f,g;
+        Stopwatch stopwatch = new();
+        stopwatch.Start();
+        for (uint i = 257; i < 429496; i += 2)
+        {
+            f = true;
+            g = true;
+            for (uint j = 0; j < PrimesLessThan255.Length; j++)
+            {
+                if (i % PrimesLessThan255[j] == 0)
+                {
+                    f = false; // 有小的素因子
+                    break;
+                }
+            }
+            if (f)
+            {
+                for (uint j = 257; j < Math.Sqrt(i); j++)
+                {
+                    if (i % j == 0)
+                    {
+                        g = false; // 是合数
+                        break;
+                    }
+                }
+            }
+            if (f && !g) //没有小的素因子，但也是合数
+            {
+                Console.WriteLine(i);
+                count++;
+            }
+        }
+        Console.WriteLine($"count={count}");
+        stopwatch.Stop();
+        Console.WriteLine($"PrimeLessThan4294967295: {stopwatch.ElapsedMilliseconds * 0.001:F3}s");
     }
 
 }
