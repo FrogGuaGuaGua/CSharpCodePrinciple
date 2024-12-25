@@ -1,6 +1,6 @@
 ﻿# C#数学运算相关开发性能优化方法
 
-本文Github地址：[CSharp-MathOptimization](https://github.com/FrogGuaGuaGua/CSharpCodePrinciple/blob/master/CSharp-MathOptimization.md)
+本文Github地址：[CSharp-MathOptimization.md](https://github.com/FrogGuaGuaGua/CSharpCodePrinciple/blob/master/CSharp-MathOptimization.md)
 
 华为公司的[C语言编程规范](https://ilcc.gitbooks.io/wiki/content/StyleGuide/Huawei-C/index.html)在开头就强调了：
 > 一般情况下，代码的可阅读性高于性能，只有确定性能是瓶颈时，才应该主动优化。
@@ -120,7 +120,7 @@
 21). 绝大多数时候，矩阵求逆都是非必须的(而且计算代价很大的)，除非就是要得到逆矩阵本身。比如对于线性方程组 $Ax=b,\ x=A^{-1}b$ ，使用逆矩阵表达方程组的解只具有形式意义，不可直接用于计算。请使用`高斯消去法`、`LU分解法`、`Jacobi迭代法`、`Gauss-Seidel迭代法`、`Cholesky分解法`等。矩阵的逆几乎不会单独出现，几乎总是会和其它矩阵做乘法，总有不求逆的替代方案。
 
 22). 多项式求值优先使用`秦九韶算法`， 
-$a_nx^n +a_{n-1}x^{n-1}+\cdots+a_1x+a_0 \\= (\cdots ((a_nx+a_{n-1})x+a_{n-2})x+\cdots+a_1)x+a_0$   
+$a_nx^n +a_{n-1}x^{n-1}+\cdots+a_1x+a_0 = (\cdots ((a_nx+a_{n-1})x+a_{n-2})x+\cdots+a_1)x+a_0$   
 对于阶数不太高的多项式(比如小于10阶)，不要使用循环语句来实现这个算法，而应该手工进行`循环展开`。还可以使用融合乘加指令[Fma.MultiplyAdd](https://learn.microsoft.com/zh-cn/dotnet/api/system.runtime.intrinsics.x86.fma.multiplyadd?view=net-9.0)进行进一步加速。秦九韶算法是一个串行的算法，无法并行。如果某个n次多项式的全部根均为实数(设为 $x_1$ , $x_2$ , $\cdots$ , $x_n$ ，需要提前计算出来)，那就可以使用`SIMD`指令进行并行计算： $a_n(x-x_1)(x-x_2)\cdots (x-x_n)$ 
 
 23). 利用泰勒级数计算double型函数值时，多项式阶数通常不应该超过17阶，太高的阶数没有意义(因为浮点运算的累积误差)。泰勒级数具有`局部性`，离展开点越远，精度越差。所以如果要提高计算精度，首先应考虑`更换展开点`，而不是提高多项式的阶数。
