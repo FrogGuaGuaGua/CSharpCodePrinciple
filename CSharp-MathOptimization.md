@@ -27,7 +27,7 @@
 ```
  同一个角的正弦和余弦值都要使用两次。一元二次方程求根， $\frac{\sqrt{\Delta}}{2a}$ 会使用两次。二元一次方程求根，系数矩阵的行列式值会使用两次。在循环中如果要以同样的参数调用某个函数，或者有一些不随循环变化的子过程，则应提到循环外部，用变量存储。
 
-7. 对浮点数进行取整操作时，如果确定浮点数的大小不超出int(或long)型的范围，以及不会出现NaN，则可以用强制类型转换结合条件语句替代Floor、Ceiling和Round函数，显著提高速度。使用 (int)(t $ \pm $  0.5) 来代替Math.Round(t)则需谨慎，因为当t的小数部分为0.5时，Round(t)的结果取决于中点值舍入模式的设定，默认是MidpointRounding.ToEven，即向最近的偶数舍入。其它模式还有ToZero, AwayFromZero, ToNegativeInfinity, ToPositiveInfinity. 要根据不同的舍入模式选择不同的替代写法。
+7. 对浮点数进行取整操作时，如果确定浮点数的大小不超出int(或long)型的范围，以及不会出现NaN，则可以用强制类型转换结合条件语句替代Floor、Ceiling和Round函数，显著提高速度。使用 (int)(t ± 0.5) 来代替Math.Round(t)则需谨慎，因为当t的小数部分为0.5时，Round(t)的结果取决于中点值舍入模式的设定，默认是MidpointRounding.ToEven，即向最近的偶数舍入。其它模式还有ToZero, AwayFromZero, ToNegativeInfinity, ToPositiveInfinity. 要根据不同的舍入模式选择不同的替代写法。
 ```C#
 	// 替代 a = (int)Math.Floor(t)
 	a = (t < 0 ? (int)t - 1 : (int)t);
