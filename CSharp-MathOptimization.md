@@ -1,6 +1,6 @@
 ﻿# C#数学运算相关开发性能优化方法
 
-本文Github地址：https://github.com/FrogGuaGuaGua/CSharpCodePrinciple/blob/master/CSharp-MathOptimization.md
+本文Github地址：[CSharp-MathOptimization](https://github.com/FrogGuaGuaGua/CSharpCodePrinciple/blob/master/CSharp-MathOptimization.md)
 
 华为公司的[C语言编程规范](https://ilcc.gitbooks.io/wiki/content/StyleGuide/Huawei-C/index.html)在开头就强调了：
 > 一般情况下，代码的可阅读性高于性能，只有确定性能是瓶颈时，才应该主动优化。
@@ -68,12 +68,12 @@
 12). 尽量避免编写含`递归`调用的函数。比如阶乘函数 `n!`，递推数列(斐波那契数列、汉诺塔问题等)，二分查找等，均可以用循环替代递归。
 
 13). 对于那些参数的允许范围比较小的函数，优先考虑用`查表法`实现。比如阶乘函数 `n!`，因为阶乘函数增长太快，在大多数情况下，阶乘函数允许的参数的范围很小，  
- $ 13! = 6227020800 >2^{32} = 4294967296 $ = uint.MaxValue  
- $ 21!=5.109\times 10^{19}>2^{64} = 1.845\times 10^{19} $ = ulong.MaxValue  
- $ 35!=1.033\times 10^{40}>2^{128} = 3.403\times 10^{38} $ = float.MaxValue  
- $ 171!=1.241\times 10^{309}>2^{1024} = 1.798\times 10^{308} $ = double.MaxValue  
+ $13! = 6227020800 >2^{32} = 4294967296$ = uint.MaxValue  
+ $21!=5.109\times 10^{19} >2^{64} = 1.845\times 10^{19}$ = ulong.MaxValue  
+ $35!=1.033\times 10^{40} >2^{128} = 3.403\times 10^{38}$ = float.MaxValue  
+ $171!=1.241\times 10^{309} >2^{1024} = 1.798\times 10^{308}$ = double.MaxValue  
 至多占用`171*8 = 1368`Byte的存储空间，就能满足double型计算的需求。不仅速度快，而且没有多次浮点乘法带来的累积误差。  
-特殊情况下，指数函数的自变量如果只能取正整数，那么自变量的范围一般也不会很大，比如 $ e^{709} < 2^{1024} < e^{710} $ ，那么可以考虑对不超过某一阈值的整数采用查表法，超过该阈值则调用标准库。或者为自变量取等差数列时的函数值建立数表，然后用少量运算就能得到0~709内任意整数的函数值(参见 https://zhuanlan.zhihu.com/p/5221342896 )。  
+特殊情况下，指数函数的自变量如果只能取正整数，那么自变量的范围一般也不会很大，比如 $e^{709} < 2^{1024} < e^{710}$ ，那么可以考虑对不超过某一阈值的整数采用查表法，超过该阈值则调用标准库。或者为自变量取等差数列时的函数值建立数表，然后用少量运算就能得到0~709内任意整数的函数值(参见 https://zhuanlan.zhihu.com/p/5221342896 )。  
 `二项式系数(组合数)`和阶乘的自然对数`ln(n!)`也可以采用部分查表法。
 
 14). 小于255的素数(质数)一共有`54`个，如下：
@@ -113,15 +113,15 @@
 > * 打开和关闭同一个文件、数据库等。  
 > * 创建和断开对同一个URI的链接。  
 
-19). 避免不加测试地用`Parallel.For`代替for循环，因为前者需要创建和管理多个线程，会带来额外的开销。当循环次数太少或者单次循环所做的运算太简单时，使用Parallel.For反而会降低性能，而且很可能出现计算结果不正确的问题。比如函数f(x)在某个区间上做数值积分，有`sum+=f(xi)*dx`这样的累加运算，需要测试Parallel.For的耗时是否更短以及结果是否正确。
+19). 避免不加测试地用`Parallel.For`代替for循环，因为前者需要创建和管理多个线程，会带来额外的开销。当循环次数太少或者单次循环所做的运算太简单时，使用Parallel.For反而会降低性能，而且很可能出现计算结果不正确的问题。比如函数f(x)在某个区间上做数值积分，有`sum += f(xi)*dx`这样的累加运算，需要测试Parallel.For的耗时是否更短以及结果是否正确。
 
 20). 考虑使用[[SkipLocalsInit](https://learn.microsoft.com/zh-cn/dotnet/csharp/language-reference/attributes/general#skiplocalsinit-attribute)]属性，省略CLR将方法中声明的所有局部变量初始化为其默认值的操作，提高速度。注意：此属性需要 `AllowUnsafeBlocks` 编译器选项，同时要重点检查代码中是否存在访问未初始化的变量的行为。
 
 21). 绝大多数时候，矩阵求逆都是非必须的(而且计算代价很大的)，除非就是要得到逆矩阵本身。比如对于线性方程组 $Ax=b,\ x=A^{-1}b$ ，使用逆矩阵表达方程组的解只具有形式意义，不可直接用于计算。请使用`高斯消去法`、`LU分解法`、`Jacobi迭代法`、`Gauss-Seidel迭代法`、`Cholesky分解法`等。矩阵的逆几乎不会单独出现，几乎总是会和其它矩阵做乘法，总有不求逆的替代方案。
 
 22). 多项式求值优先使用`秦九韶算法`， 
-$ a_nx^n +a_{n-1}x^{n-1}+\cdots+a_1x+a_0 = (\cdots ((a_nx+a_{n-1})x+a_{n-2})x+\cdots+a_1)x+a_0 $   
-对于阶数不太高的多项式(比如小于10阶)，不要使用循环语句来实现这个算法，而应该手工进行`循环展开`。还可以使用融合乘加指令[Fma.MultiplyAdd](https://learn.microsoft.com/zh-cn/dotnet/api/system.runtime.intrinsics.x86.fma.multiplyadd?view=net-9.0)进行进一步加速。秦九韶算法是一个串行的算法，无法并行。如果某个n次多项式的全部根均为实数(设为 $x_1$ , $x_2$ , $\cdots$ , $ x_n $ ，需要提前计算出来)，那就可以使用`SIMD`指令进行并行计算： $ a_n(x-x_1)(x-x_2)\cdots (x-x_n) $ 
+$a_nx^n +a_{n-1}x^{n-1}+\cdots+a_1x+a_0 \\= (\cdots ((a_nx+a_{n-1})x+a_{n-2})x+\cdots+a_1)x+a_0$   
+对于阶数不太高的多项式(比如小于10阶)，不要使用循环语句来实现这个算法，而应该手工进行`循环展开`。还可以使用融合乘加指令[Fma.MultiplyAdd](https://learn.microsoft.com/zh-cn/dotnet/api/system.runtime.intrinsics.x86.fma.multiplyadd?view=net-9.0)进行进一步加速。秦九韶算法是一个串行的算法，无法并行。如果某个n次多项式的全部根均为实数(设为 $x_1$ , $x_2$ , $\cdots$ , $x_n$ ，需要提前计算出来)，那就可以使用`SIMD`指令进行并行计算： $a_n(x-x_1)(x-x_2)\cdots (x-x_n)$ 
 
 23). 利用泰勒级数计算double型函数值时，多项式阶数通常不应该超过17阶，太高的阶数没有意义(因为浮点运算的累积误差)。泰勒级数具有`局部性`，离展开点越远，精度越差。所以如果要提高计算精度，首先应考虑`更换展开点`，而不是提高多项式的阶数。
 
