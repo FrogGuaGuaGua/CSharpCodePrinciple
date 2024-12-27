@@ -16,7 +16,7 @@ class SpeedTest
         179, 181, 191, 193, 197, 199, 211, 223, 227, 229, 233, 239, 241, 251];
     static void Main()
     {
-        int N = 300_000_000;
+        int N = 3_000_000;
         //MeasureExecutionTime(() => IntMultiDivide(N), nameof(IntMultiDivide));
         //MeasureExecutionTime(() => IntLeftRightShift(N), nameof(IntLeftRightShift));
         //MeasureExecutionTime(() => IntLeftRightShiftParallelFor(N), nameof(IntLeftRightShiftParallelFor));
@@ -74,7 +74,14 @@ class SpeedTest
         //Console.WriteLine($"{MyBinomial(297, 10)},{SpecialFunctions.Binomial(297,10)}");
         //Console.WriteLine($"{MyBinomial(297, 11)},{SpecialFunctions.Binomial(297,11)}");
 
-        TestPrimeLessThan4294967295();
+        //TestPrimeLessThan4294967295();
+        MeasureExecutionTime(() => TestMathSqrt(N), nameof(TestMathSqrt));
+        MeasureExecutionTime(() => TestSqrtDiv(N), nameof(TestSqrtDiv));
+        MeasureExecutionTime(() => TestSqrtMul(N), nameof(TestSqrtMul));
+
+        Console.WriteLine();
+        MeasureExecutionTime(() => TestDecSqrtDiv(N), nameof(TestDecSqrtDiv));
+        MeasureExecutionTime(() => TestDecSqrtMul(N), nameof(TestDecSqrtMul));
     }
 
     static void MeasureExecutionTime(Func<double> testFunction, string functionName)
@@ -86,7 +93,15 @@ class SpeedTest
         stopwatch.Stop();
         Console.WriteLine($"{functionName}: {stopwatch.ElapsedMilliseconds * 0.001:F3}s");
     }
-
+    static void MeasureExecutionTime(Func<decimal> testFunction, string functionName)
+    {
+        Stopwatch stopwatch = new();
+        stopwatch.Start();
+        decimal sum = testFunction();
+        Console.WriteLine($"sum={sum}");
+        stopwatch.Stop();
+        Console.WriteLine($"{functionName}: {stopwatch.ElapsedMilliseconds * 0.001:F3}s");
+    }
     static double IntMultiDivide(int N)
     {
         long sum = 0L;
@@ -695,7 +710,7 @@ class SpeedTest
     static void TestPrimeLessThan4294967295()
     {
         uint count = 0;
-        bool f,g;
+        bool f, g;
         Stopwatch stopwatch = new();
         stopwatch.Start();
         for (uint i = 257; i < 429496; i += 2)
@@ -730,6 +745,185 @@ class SpeedTest
         Console.WriteLine($"count={count}");
         stopwatch.Stop();
         Console.WriteLine($"PrimeLessThan4294967295: {stopwatch.ElapsedMilliseconds * 0.001:F3}s");
+    }
+
+    static double SqrtUseDiv(double x)
+    {
+        if (x < 0.0)
+        {
+            return double.NaN;
+        }
+        if (x == 0.0)
+        {
+            return 0.0;
+        }
+        double eps = x * 1e-14;
+        double an_1 = x * 0.5;
+        double an = 0.5 * (an_1 + x / an_1);
+        while (Math.Abs(an - an_1) > eps)
+        {
+            an_1 = an;
+            an = 0.5 * (an_1 + x / an_1);
+        }
+        return an;
+    }
+
+    static double SqrtUseMul(double x)
+    {
+        if (x < 0.0)
+        {
+            return double.NaN;
+        }
+        if (x == 0.0)
+        {
+            return 0.0;
+        }
+        double eps = x * 1e-14;
+        double an_1;
+        if (x < 1.0)
+        {
+            an_1 = x;
+        }
+        else
+        {
+            an_1 = 1.0 / x;
+        }
+
+        double an = 0.5 * an_1 * (3.0 - x * an_1 * an_1);
+        while (Math.Abs(an - an_1) > eps)
+        {
+            an_1 = an;
+            an = 0.5 * an_1 * (3.0 - x * an_1 * an_1);
+        }
+        return an * x;
+    }
+    static double SqrtUseMulOptimized(double x)
+    {
+        if (x < 0.0)
+        {
+            return double.NaN;
+        }
+        else if (x == 0.0 || x == 1.0)
+        {
+            return x;
+        }
+
+        // 使用位运算估计初始值
+        long i = BitConverter.DoubleToInt64Bits(x);
+        // 初始猜测值
+        i = (i >> 1) + 0x1ff8000000000000L;
+        double an = BitConverter.Int64BitsToDouble(i);
+
+        // 牛顿迭代，提高精度
+        an = an * (1.5 - 0.5 * x * an * an);
+
+        // 根据需要，执行多次迭代
+        an = an * (1.5 - 0.5 * x * an * an);
+
+        return an * x;
+    }
+
+
+    static double TestMathSqrt(double N)
+    {
+        double sum = 0.0;
+        for (double i = 0.0; i < N; i++)
+        {
+            sum = sum + Math.Sqrt(i);
+        }
+        return sum;
+    }
+
+    static double TestSqrtDiv(double N)
+    {
+        double sum = 0.0;
+        for (double i = 0.0; i < N; i++)
+        {
+            sum = sum + SqrtUseDiv(i);
+        }
+        return sum;
+    }
+
+    static double TestSqrtMul(double N)
+    {
+        double sum = 0.0;
+        for (double i = 0.0; i < N; i++)
+        {
+            sum = sum + SqrtUseMul(i);
+        }
+        return sum;
+    }
+
+    ////////////////////////////////
+    static decimal DecSqrtUseDiv(decimal x)
+    {
+        if (x < 0.0m)
+        {
+            throw new ArgumentOutOfRangeException(nameof(x), "Cannot compute the square root of a negative number.");
+        }
+        if (x == 0.0m)
+        {
+            return 0.0m;
+        }
+        decimal eps = x * 1e-28m;
+        decimal an_1 = x * 0.5m;
+        decimal an = 0.5m * (an_1 + x / an_1);
+        while (Math.Abs(an - an_1) > eps)
+        {
+            an_1 = an;
+            an = 0.5m * (an_1 + x / an_1);
+        }
+        return an;
+    }
+
+    static decimal DecSqrtUseMul(decimal x)
+    {
+        if (x < 0.0m)
+        {
+            throw new ArgumentOutOfRangeException(nameof(x), "Cannot compute the square root of a negative number.");
+        }
+        if (x == 0.0m)
+        {
+            return 0.0m;
+        }
+        decimal eps = x * 1e-28m;
+        decimal an_1;
+        if (x < 1.0m)
+        {
+            an_1 = x;
+        }
+        else
+        {
+            an_1 = 1.0m / x;
+        }
+
+        decimal an = 0.5m * an_1 * (3.0m - x * an_1 * an_1);
+        while (Math.Abs(an - an_1) > eps)
+        {
+            an_1 = an;
+            an = 0.5m * an_1 * (3.0m - x * an_1 * an_1);
+        }
+        return an * x;
+    }
+
+    static decimal TestDecSqrtDiv(decimal N)
+    {
+        decimal sum = 0.0m;
+        for (decimal i = 0.0m; i < N; i++)
+        {
+            sum = sum + DecSqrtUseDiv(i);
+        }
+        return sum;
+    }
+
+    static decimal TestDecSqrtMul(decimal N)
+    {
+        decimal sum = 0.0m;
+        for (decimal i = 0.0m; i < N; i++)
+        {
+            sum = sum + DecSqrtUseMul(i);
+        }
+        return sum;
     }
 
 }
