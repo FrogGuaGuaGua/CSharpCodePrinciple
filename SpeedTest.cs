@@ -855,6 +855,7 @@ class SpeedTest
     }
 
     ////////////////////////////////
+    /// https://www.cnblogs.com/skyivben/archive/2013/02/23/2923582.html
     static decimal DecSqrtUseDiv(decimal x)
     {
         if (x < 0.0m)
