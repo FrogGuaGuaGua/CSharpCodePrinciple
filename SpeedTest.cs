@@ -16,7 +16,7 @@ class SpeedTest
         179, 181, 191, 193, 197, 199, 211, 223, 227, 229, 233, 239, 241, 251];
     static void Main()
     {
-        int N = 3_000_000;
+        int N = 7_000_000;
         //MeasureExecutionTime(() => IntMultiDivide(N), nameof(IntMultiDivide));
         //MeasureExecutionTime(() => IntLeftRightShift(N), nameof(IntLeftRightShift));
         //MeasureExecutionTime(() => IntLeftRightShiftParallelFor(N), nameof(IntLeftRightShiftParallelFor));

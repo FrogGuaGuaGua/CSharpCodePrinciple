@@ -132,6 +132,8 @@ $a_nx^n +a_{n-1}x^{n-1}+\cdots+a_1x+a_0 = (\cdots ((a_nx+a_{n-1})x+a_{n-2})x+\cd
 
 23). 利用泰勒级数计算double型函数值时，多项式阶数通常不应该超过17阶，太高的阶数没有意义(因为浮点运算的累积误差)。泰勒级数具有`局部性`，离展开点越远，精度越差。所以如果要提高计算精度，首先应考虑`更换展开点`，而不是提高多项式的阶数。
 
+24). 除非绝对必要(比如要求很高的精度或比long型更大的范围)，否则不要使用decimal型变量，因为其计算耗时是double的几十倍甚至百倍(decimal除法尤其缓慢)。
+
 
 参考文章：
  * [Writing Faster Managed Code: Know What Things Cost](https://learn.microsoft.com/en-us/previous-versions/dotnet/articles/ms973852(v=msdn.10))  
