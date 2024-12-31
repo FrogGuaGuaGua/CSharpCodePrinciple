@@ -75,13 +75,15 @@ class SpeedTest
         //Console.WriteLine($"{MyBinomial(297, 11)},{SpecialFunctions.Binomial(297,11)}");
 
         //TestPrimeLessThan4294967295();
-        MeasureExecutionTime(() => TestMathSqrt(N), nameof(TestMathSqrt));
-        MeasureExecutionTime(() => TestSqrtDiv(N), nameof(TestSqrtDiv));
-        MeasureExecutionTime(() => TestSqrtMul(N), nameof(TestSqrtMul));
+        //MeasureExecutionTime(() => TestMathSqrt(N), nameof(TestMathSqrt));
+        //MeasureExecutionTime(() => TestSqrtDiv(N), nameof(TestSqrtDiv));
+        //MeasureExecutionTime(() => TestSqrtMul(N), nameof(TestSqrtMul));
 
-        Console.WriteLine();
-        MeasureExecutionTime(() => TestDecSqrtDiv(N), nameof(TestDecSqrtDiv));
-        MeasureExecutionTime(() => TestDecSqrtMul(N), nameof(TestDecSqrtMul));
+        //Console.WriteLine();
+        //MeasureExecutionTime(() => TestDecSqrtDiv(N), nameof(TestDecSqrtDiv));
+        //MeasureExecutionTime(() => TestDecSqrtMul(N), nameof(TestDecSqrtMul));
+
+        GenerateMultiplesOfPrimesLessThan255();
     }
 
     static void MeasureExecutionTime(Func<double> testFunction, string functionName)
@@ -925,6 +927,15 @@ class SpeedTest
             sum = sum + DecSqrtUseMul(i);
         }
         return sum;
+    }
+
+    static void GenerateMultiplesOfPrimesLessThan255()
+    {
+        for (uint i = 0; i < PrimesLessThan255.Length; i++)
+        {
+            uint k = (uint)(4294967296L / PrimesLessThan255[i]) + 1;
+            Console.WriteLine($"{k},");
+        }
     }
 
 }
