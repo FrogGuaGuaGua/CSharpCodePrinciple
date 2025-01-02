@@ -1,8 +1,6 @@
 ﻿using System.Diagnostics;
 using static System.Math;
-using MathNet.Numerics;
 using System.Numerics;
-using MathNet.Numerics.Random;
 
 class SpeedTest
 {
@@ -14,6 +12,15 @@ class SpeedTest
         29,  31, 37, 41, 43, 47, 53, 59, 61, 67, 71, 73, 79, 83, 89, 97, 101,
         103, 107, 109, 113, 127, 131, 137, 139, 149, 151,157, 163, 167, 173,
         179, 181, 191, 193, 197, 199, 211, 223, 227, 229, 233, 239, 241, 251];
+    static readonly uint[] MultiplyPrimesLessThan255 = [
+        2147483649, 1431655766, 858993460, 613566757, 390451573, 330382100, 252645136, 
+        226050911, 186737709, 148102321, 138547333, 116080198, 104755300, 99882961, 
+        91382283, 81037119, 72796056, 70409300, 64103990, 60492498, 58835169, 54366675, 
+        51746594, 48258060, 44278014, 42524429, 41698712, 40139882, 39403370, 38008561, 
+        33818641, 32786010, 31350127, 30899046, 28825284, 28443493, 27356480, 26349493, 
+        25718368, 24826401, 23994231, 23729102, 22486740, 22253717, 21801865, 21582751, 
+        20355296, 19259944, 18920561, 18755316, 18433337, 17970575, 17821442, 17111424 ];
+
     static void Main()
     {
         int N = 610_000_103;
@@ -21,9 +28,9 @@ class SpeedTest
         //MeasureExecutionTime(() => IntLeftRightShift(N), nameof(IntLeftRightShift));
         //MeasureExecutionTime(() => IntLeftRightShiftParallelFor(N), nameof(IntLeftRightShiftParallelFor));
         //Console.WriteLine();
-        MeasureExecutionTime(() => IntMod2n(N), nameof(IntMod2n));
-        MeasureExecutionTime(() => IntAnd2n_1(N), nameof(IntAnd2n_1));
-        Console.WriteLine();
+        //MeasureExecutionTime(() => IntMod2n(N), nameof(IntMod2n));
+        //MeasureExecutionTime(() => IntAnd2n_1(N), nameof(IntAnd2n_1));
+        //Console.WriteLine();
         //MeasureExecutionTime(() => DoubleDivide(N), nameof(DoubleDivide));
         //MeasureExecutionTime(() => DoubleMulti(N), nameof(DoubleMulti));
         //MeasureExecutionTime(() => FloatMulti(N), nameof(FloatMulti));
@@ -86,7 +93,7 @@ class SpeedTest
         //MeasureExecutionTime(() => TestDecSqrtDiv(N), nameof(TestDecSqrtDiv));
         //MeasureExecutionTime(() => TestDecSqrtMul(N), nameof(TestDecSqrtMul));
 
-        //GenerateMultiplesOfPrimesLessThan255();
+        GenerateMultiplesOfPrimesLessThan255();
     }
 
     static void MeasureExecutionTime(Func<double> testFunction, string functionName)
@@ -141,6 +148,23 @@ class SpeedTest
         return sum;
     }
 
+    static double IntLeftRightShiftParallelFor(int N)
+    {
+        long sum = 0L;
+        int a, b, c, d, e, f;
+        Parallel.For(0, N, i =>
+        {
+            a = i << 1;
+            b = i << 2;
+            c = i << 3;
+            d = i >> 1;
+            e = i >> 2;
+            f = i >> 3;
+            Interlocked.Add(ref sum, a + b - c + d + e + f);
+        });
+        return sum;
+    }
+
     static double IntMod2n(int N)
     {
         long sum = 0L;
@@ -172,23 +196,6 @@ class SpeedTest
             f = i & 63;
             sum = sum + a + b - c + d + e + f;
         }
-        return sum;
-    }
-
-    static double IntLeftRightShiftParallelFor(int N)
-    {
-        long sum = 0L;
-        int a, b, c, d, e, f;
-        Parallel.For(0, N, i =>
-        {
-            a = i << 1;
-            b = i << 2;
-            c = i << 3;
-            d = i >> 1;
-            e = i >> 2;
-            f = i >> 3;
-            Interlocked.Add(ref sum, a + b - c + d + e + f);
-        });
         return sum;
     }
 
@@ -475,7 +482,7 @@ class SpeedTest
         {
             if (b == 0.0)
             {
-                x1 = Complex.Zero / Complex.Zero;  // Complex.NaN;
+                x1 = Complex.NaN;
                 x2 = x1;
             }
             else
@@ -507,21 +514,21 @@ class SpeedTest
         return (x1, x2);
     }
 
-    static double TestQuadratic(int N)
-    {
-        Complex x1, x2;
-        double sum = 0.0;
-        double a, b, c;
-        for (int i = 11; i < N; i++)
-        {
-            a = -0.1 * i + 1;
-            b = 0.3464 * i + 5;
-            c = -0.3 * i + 7;
-            (x1, x2) = FindRoots.Quadratic(c, b, a);
-            sum = sum + x1.Real + x2.Imaginary;
-        }
-        return sum;
-    }
+    //static double TestQuadratic(int N)
+    //{
+    //    Complex x1, x2;
+    //    double sum = 0.0;
+    //    double a, b, c;
+    //    for (int i = 11; i < N; i++)
+    //    {
+    //        a = -0.1 * i + 1;
+    //        b = 0.3464 * i + 5;
+    //        c = -0.3 * i + 7;
+    //        (x1, x2) = FindRoots.Quadratic(c, b, a); // Mathnet.Numerics
+    //        sum = sum + x1.Real + x2.Imaginary;
+    //    }
+    //    return sum;
+    //}
 
     static double TestMyQuadratic(int N)
     {
@@ -566,19 +573,19 @@ class SpeedTest
         }
     }
 
-    static double TestBinomial(int N)
-    {
-        double sum = 0.0;
-        for (int i = 120; i < N; i++)
-        {
-            for (int j = 100; j <= i; j++)
-            {
-                sum = sum + SpecialFunctions.Binomial(i, j);
-            }
-            sum = sum - Math.Pow(2, i);
-        }
-        return sum;
-    }
+    //static double TestBinomial(int N)
+    //{
+    //    double sum = 0.0;
+    //    for (int i = 120; i < N; i++)
+    //    {
+    //        for (int j = 100; j <= i; j++)
+    //        {
+    //            sum = sum + SpecialFunctions.Binomial(i, j); //MathNet.Numerics.SpecialFunctions.Binomial(i, j);
+    //        }
+    //        sum = sum - Math.Pow(2, i);
+    //    }
+    //    return sum;
+    //}
 
     static double TestMyBinomial(int N)
     {
@@ -1014,6 +1021,19 @@ class SpeedTest
         {
             uint k = (uint)(4294967296L / PrimesLessThan255[i]) + 1;
             Console.WriteLine($"{k},");
+        }
+    }
+
+    static void TestMultiCorrectness()
+    {
+       for(long i=2; i < 4294967296L; i++)
+        {
+            long a = i % PrimesLessThan255[2];
+            long b = i << 1;
+            if (a != b)
+            {
+                Console.WriteLine($"i={i},a={a},b={b}");
+            }
         }
     }
 
