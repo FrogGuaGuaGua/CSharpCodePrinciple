@@ -16,7 +16,7 @@ class SpeedTest
         179, 181, 191, 193, 197, 199, 211, 223, 227, 229, 233, 239, 241, 251];
     static void Main()
     {
-        int N = 7_000_000;
+        int N = 70_000_000;
         //MeasureExecutionTime(() => IntMultiDivide(N), nameof(IntMultiDivide));
         //MeasureExecutionTime(() => IntLeftRightShift(N), nameof(IntLeftRightShift));
         //MeasureExecutionTime(() => IntLeftRightShiftParallelFor(N), nameof(IntLeftRightShiftParallelFor));
@@ -75,15 +75,15 @@ class SpeedTest
         //Console.WriteLine($"{MyBinomial(297, 11)},{SpecialFunctions.Binomial(297,11)}");
 
         //TestPrimeLessThan4294967295();
-        //MeasureExecutionTime(() => TestMathSqrt(N), nameof(TestMathSqrt));
-        //MeasureExecutionTime(() => TestSqrtDiv(N), nameof(TestSqrtDiv));
-        //MeasureExecutionTime(() => TestSqrtMul(N), nameof(TestSqrtMul));
+        MeasureExecutionTime(() => TestMathSqrt(N), nameof(TestMathSqrt));
+        MeasureExecutionTime(() => TestSqrtDiv(N), nameof(TestSqrtDiv));
+        MeasureExecutionTime(() => TestSqrtMul(N), nameof(TestSqrtMul));
 
         //Console.WriteLine();
         //MeasureExecutionTime(() => TestDecSqrtDiv(N), nameof(TestDecSqrtDiv));
         //MeasureExecutionTime(() => TestDecSqrtMul(N), nameof(TestDecSqrtMul));
 
-        GenerateMultiplesOfPrimesLessThan255();
+        //GenerateMultiplesOfPrimesLessThan255();
     }
 
     static void MeasureExecutionTime(Func<double> testFunction, string functionName)
@@ -759,15 +759,28 @@ class SpeedTest
         {
             return 0.0;
         }
-        double eps = x * 1e-14;
-        double an_1 = x * 0.5;
-        double an = 0.5 * (an_1 + x / an_1);
-        while (Math.Abs(an - an_1) > eps)
-        {
-            an_1 = an;
-            an = 0.5 * (an_1 + x / an_1);
-        }
-        return an;
+        double x_2 = x * 0.5;
+        double sqrtx = 0.1 * x;
+
+        sqrtx = sqrtx * 0.5 + x_2 / sqrtx;
+        sqrtx = sqrtx * 0.5 + x_2 / sqrtx;
+        sqrtx = sqrtx * 0.5 + x_2 / sqrtx;
+        sqrtx = sqrtx * 0.5 + x_2 / sqrtx;
+        sqrtx = sqrtx * 0.5 + x_2 / sqrtx;
+
+        sqrtx = sqrtx * 0.5 + x_2 / sqrtx;
+        sqrtx = sqrtx * 0.5 + x_2 / sqrtx;
+        sqrtx = sqrtx * 0.5 + x_2 / sqrtx;
+        sqrtx = sqrtx * 0.5 + x_2 / sqrtx;
+        sqrtx = sqrtx * 0.5 + x_2 / sqrtx;
+
+        sqrtx = sqrtx * 0.5 + x_2 / sqrtx;
+        sqrtx = sqrtx * 0.5 + x_2 / sqrtx;
+        sqrtx = sqrtx * 0.5 + x_2 / sqrtx;
+        sqrtx = sqrtx * 0.5 + x_2 / sqrtx;
+       // sqrtx = sqrtx * 0.5 + x_2 / sqrtx;
+
+        return sqrtx;
     }
 
     static double SqrtUseMul(double x)
@@ -780,51 +793,43 @@ class SpeedTest
         {
             return 0.0;
         }
-        double eps = x * 1e-14;
-        double an_1;
-        if (x < 1.0)
-        {
-            an_1 = x;
-        }
-        else
-        {
-            an_1 = 1.0 / x;
-        }
+        double x_2 = x * 0.5;
+        double I_sqrtx;
+        //if (x < 1.0)
+        //{
+        //    I_sqrtx = x;
+        //}
+        //else
+        //{
+        //    I_sqrtx = 1.0 / x;
+        //}
+        I_sqrtx = 1.0 / x;
+        I_sqrtx = I_sqrtx * (1.5 - x_2 * I_sqrtx * I_sqrtx);
+        I_sqrtx = I_sqrtx * (1.5 - x_2 * I_sqrtx * I_sqrtx);
+        I_sqrtx = I_sqrtx * (1.5 - x_2 * I_sqrtx * I_sqrtx);
+        I_sqrtx = I_sqrtx * (1.5 - x_2 * I_sqrtx * I_sqrtx);
+        I_sqrtx = I_sqrtx * (1.5 - x_2 * I_sqrtx * I_sqrtx);
 
-        double an = 0.5 * an_1 * (3.0 - x * an_1 * an_1);
-        while (Math.Abs(an - an_1) > eps)
-        {
-            an_1 = an;
-            an = 0.5 * an_1 * (3.0 - x * an_1 * an_1);
-        }
-        return an * x;
+        I_sqrtx = I_sqrtx * (1.5 - x_2 * I_sqrtx * I_sqrtx);
+        I_sqrtx = I_sqrtx * (1.5 - x_2 * I_sqrtx * I_sqrtx);
+        I_sqrtx = I_sqrtx * (1.5 - x_2 * I_sqrtx * I_sqrtx);
+        I_sqrtx = I_sqrtx * (1.5 - x_2 * I_sqrtx * I_sqrtx);
+        I_sqrtx = I_sqrtx * (1.5 - x_2 * I_sqrtx * I_sqrtx);
+
+        I_sqrtx = I_sqrtx * (1.5 - x_2 * I_sqrtx * I_sqrtx);
+        I_sqrtx = I_sqrtx * (1.5 - x_2 * I_sqrtx * I_sqrtx);
+        I_sqrtx = I_sqrtx * (1.5 - x_2 * I_sqrtx * I_sqrtx);
+        I_sqrtx = I_sqrtx * (1.5 - x_2 * I_sqrtx * I_sqrtx);
+        I_sqrtx = I_sqrtx * (1.5 - x_2 * I_sqrtx * I_sqrtx);
+
+        I_sqrtx = I_sqrtx * (1.5 - x_2 * I_sqrtx * I_sqrtx);
+        I_sqrtx = I_sqrtx * (1.5 - x_2 * I_sqrtx * I_sqrtx);
+        I_sqrtx = I_sqrtx * (1.5 - x_2 * I_sqrtx * I_sqrtx);
+        I_sqrtx = I_sqrtx * (1.5 - x_2 * I_sqrtx * I_sqrtx);
+        I_sqrtx = I_sqrtx * (1.5 - x_2 * I_sqrtx * I_sqrtx);
+
+        return I_sqrtx * x;
     }
-    static double SqrtUseMulOptimized(double x)
-    {
-        if (x < 0.0)
-        {
-            return double.NaN;
-        }
-        else if (x == 0.0 || x == 1.0)
-        {
-            return x;
-        }
-
-        // 使用位运算估计初始值
-        long i = BitConverter.DoubleToInt64Bits(x);
-        // 初始猜测值
-        i = (i >> 1) + 0x1ff8000000000000L;
-        double an = BitConverter.Int64BitsToDouble(i);
-
-        // 牛顿迭代，提高精度
-        an = an * (1.5 - 0.5 * x * an * an);
-
-        // 根据需要，执行多次迭代
-        an = an * (1.5 - 0.5 * x * an * an);
-
-        return an * x;
-    }
-
 
     static double TestMathSqrt(double N)
     {
@@ -860,23 +865,32 @@ class SpeedTest
     /// https://www.cnblogs.com/skyivben/archive/2013/02/23/2923582.html
     static decimal DecSqrtUseDiv(decimal x)
     {
-        if (x < 0.0m)
+        if (x < 0m)
         {
             throw new ArgumentOutOfRangeException(nameof(x), "Cannot compute the square root of a negative number.");
         }
-        if (x == 0.0m)
-        {
-            return 0.0m;
-        }
-        decimal eps = x * 1e-28m;
-        decimal an_1 = x * 0.5m;
-        decimal an = 0.5m * (an_1 + x / an_1);
-        while (Math.Abs(an - an_1) > eps)
-        {
-            an_1 = an;
-            an = 0.5m * (an_1 + x / an_1);
-        }
-        return an;
+        decimal x_2 = x * 0.5m;
+        decimal sqrtx = x * 0.1m;
+
+        sqrtx = sqrtx * 0.5m + x_2 / sqrtx;
+        sqrtx = sqrtx * 0.5m + x_2 / sqrtx;
+        sqrtx = sqrtx * 0.5m + x_2 / sqrtx;
+        sqrtx = sqrtx * 0.5m + x_2 / sqrtx;
+        sqrtx = sqrtx * 0.5m + x_2 / sqrtx;
+
+        sqrtx = sqrtx * 0.5m + x_2 / sqrtx;
+        sqrtx = sqrtx * 0.5m + x_2 / sqrtx;
+        sqrtx = sqrtx * 0.5m + x_2 / sqrtx;
+        sqrtx = sqrtx * 0.5m + x_2 / sqrtx;
+        sqrtx = sqrtx * 0.5m + x_2 / sqrtx;
+
+        sqrtx = sqrtx * 0.5m + x_2 / sqrtx;
+        sqrtx = sqrtx * 0.5m + x_2 / sqrtx;
+        sqrtx = sqrtx * 0.5m + x_2 / sqrtx;
+        sqrtx = sqrtx * 0.5m + x_2 / sqrtx;
+        sqrtx = sqrtx * 0.5m + x_2 / sqrtx;
+
+        return sqrtx;
     }
 
     static decimal DecSqrtUseMul(decimal x)
@@ -889,40 +903,58 @@ class SpeedTest
         {
             return 0.0m;
         }
-        decimal eps = x * 1e-28m;
-        decimal an_1;
+        decimal x_2 = x * 0.5m;
+        decimal I_sqrtx;
         if (x < 1.0m)
         {
-            an_1 = x;
+            I_sqrtx = x;
         }
         else
         {
-            an_1 = 1.0m / x;
+            I_sqrtx = 1.0m / x;
         }
 
-        decimal an = 0.5m * an_1 * (3.0m - x * an_1 * an_1);
-        while (Math.Abs(an - an_1) > eps)
-        {
-            an_1 = an;
-            an = 0.5m * an_1 * (3.0m - x * an_1 * an_1);
-        }
-        return an * x;
+        I_sqrtx = I_sqrtx * (1.5m - x_2 * I_sqrtx * I_sqrtx);
+        I_sqrtx = I_sqrtx * (1.5m - x_2 * I_sqrtx * I_sqrtx);
+        I_sqrtx = I_sqrtx * (1.5m - x_2 * I_sqrtx * I_sqrtx);
+        I_sqrtx = I_sqrtx * (1.5m - x_2 * I_sqrtx * I_sqrtx);
+        I_sqrtx = I_sqrtx * (1.5m - x_2 * I_sqrtx * I_sqrtx);
+                                
+        I_sqrtx = I_sqrtx * (1.5m - x_2 * I_sqrtx * I_sqrtx);
+        I_sqrtx = I_sqrtx * (1.5m - x_2 * I_sqrtx * I_sqrtx);
+        I_sqrtx = I_sqrtx * (1.5m - x_2 * I_sqrtx * I_sqrtx);
+        I_sqrtx = I_sqrtx * (1.5m - x_2 * I_sqrtx * I_sqrtx);
+        I_sqrtx = I_sqrtx * (1.5m - x_2 * I_sqrtx * I_sqrtx);
+                                
+        I_sqrtx = I_sqrtx * (1.5m - x_2 * I_sqrtx * I_sqrtx);
+        I_sqrtx = I_sqrtx * (1.5m - x_2 * I_sqrtx * I_sqrtx);
+        I_sqrtx = I_sqrtx * (1.5m - x_2 * I_sqrtx * I_sqrtx);
+        I_sqrtx = I_sqrtx * (1.5m - x_2 * I_sqrtx * I_sqrtx);
+        I_sqrtx = I_sqrtx * (1.5m - x_2 * I_sqrtx * I_sqrtx);
+
+        I_sqrtx = I_sqrtx * (1.5m - x_2 * I_sqrtx * I_sqrtx);
+        I_sqrtx = I_sqrtx * (1.5m - x_2 * I_sqrtx * I_sqrtx);
+        I_sqrtx = I_sqrtx * (1.5m - x_2 * I_sqrtx * I_sqrtx);
+        I_sqrtx = I_sqrtx * (1.5m - x_2 * I_sqrtx * I_sqrtx);
+        I_sqrtx = I_sqrtx * (1.5m - x_2 * I_sqrtx * I_sqrtx);
+
+        return I_sqrtx * x;
     }
 
-    static decimal TestDecSqrtDiv(decimal N)
+    static decimal TestDecSqrtDiv(int N)
     {
         decimal sum = 0.0m;
-        for (decimal i = 0.0m; i < N; i++)
+        for (int i = 0; i < N; i++)
         {
             sum = sum + DecSqrtUseDiv(i);
         }
         return sum;
     }
 
-    static decimal TestDecSqrtMul(decimal N)
+    static decimal TestDecSqrtMul(int N)
     {
         decimal sum = 0.0m;
-        for (decimal i = 0.0m; i < N; i++)
+        for (int i = 0; i < N; i++)
         {
             sum = sum + DecSqrtUseMul(i);
         }
