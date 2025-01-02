@@ -16,11 +16,14 @@ class SpeedTest
         179, 181, 191, 193, 197, 199, 211, 223, 227, 229, 233, 239, 241, 251];
     static void Main()
     {
-        int N = 70_000_000;
+        int N = 610_000_103;
         //MeasureExecutionTime(() => IntMultiDivide(N), nameof(IntMultiDivide));
         //MeasureExecutionTime(() => IntLeftRightShift(N), nameof(IntLeftRightShift));
         //MeasureExecutionTime(() => IntLeftRightShiftParallelFor(N), nameof(IntLeftRightShiftParallelFor));
         //Console.WriteLine();
+        MeasureExecutionTime(() => IntMod2n(N), nameof(IntMod2n));
+        MeasureExecutionTime(() => IntAnd2n_1(N), nameof(IntAnd2n_1));
+        Console.WriteLine();
         //MeasureExecutionTime(() => DoubleDivide(N), nameof(DoubleDivide));
         //MeasureExecutionTime(() => DoubleMulti(N), nameof(DoubleMulti));
         //MeasureExecutionTime(() => FloatMulti(N), nameof(FloatMulti));
@@ -75,9 +78,9 @@ class SpeedTest
         //Console.WriteLine($"{MyBinomial(297, 11)},{SpecialFunctions.Binomial(297,11)}");
 
         //TestPrimeLessThan4294967295();
-        MeasureExecutionTime(() => TestMathSqrt(N), nameof(TestMathSqrt));
-        MeasureExecutionTime(() => TestSqrtDiv(N), nameof(TestSqrtDiv));
-        MeasureExecutionTime(() => TestSqrtMul(N), nameof(TestSqrtMul));
+        //MeasureExecutionTime(() => TestMathSqrt(N), nameof(TestMathSqrt));
+        //MeasureExecutionTime(() => TestSqrtDiv(N), nameof(TestSqrtDiv));
+        //MeasureExecutionTime(() => TestSqrtMul(N), nameof(TestSqrtMul));
 
         //Console.WriteLine();
         //MeasureExecutionTime(() => TestDecSqrtDiv(N), nameof(TestDecSqrtDiv));
@@ -133,6 +136,40 @@ class SpeedTest
             d = i >> 1;
             e = i >> 2;
             f = i >> 3;
+            sum = sum + a + b - c + d + e + f;
+        }
+        return sum;
+    }
+
+    static double IntMod2n(int N)
+    {
+        long sum = 0L;
+        int a, b, c, d, e, f;
+        for (int i = 0; i < N; i++)
+        {
+            a = i % 2;
+            b = i % 4;
+            c = i % 8;
+            d = i % 16;
+            e = i % 32;
+            f = i % 64;
+            sum = sum + a + b - c + d + e + f;
+        }
+        return sum;
+    }
+
+    static double IntAnd2n_1(int N)
+    {
+        long sum = 0L;
+        int a, b, c, d, e, f;
+        for (int i = 0; i < N; i++)
+        {
+            a = i & 1;
+            b = i & 3;
+            c = i & 7;
+            d = i & 15;
+            e = i & 31;
+            f = i & 63;
             sum = sum + a + b - c + d + e + f;
         }
         return sum;
@@ -778,7 +815,7 @@ class SpeedTest
         sqrtx = sqrtx * 0.5 + x_2 / sqrtx;
         sqrtx = sqrtx * 0.5 + x_2 / sqrtx;
         sqrtx = sqrtx * 0.5 + x_2 / sqrtx;
-       // sqrtx = sqrtx * 0.5 + x_2 / sqrtx;
+        sqrtx = sqrtx * 0.5 + x_2 / sqrtx;
 
         return sqrtx;
     }
@@ -822,11 +859,11 @@ class SpeedTest
         I_sqrtx = I_sqrtx * (1.5 - x_2 * I_sqrtx * I_sqrtx);
         I_sqrtx = I_sqrtx * (1.5 - x_2 * I_sqrtx * I_sqrtx);
 
-        I_sqrtx = I_sqrtx * (1.5 - x_2 * I_sqrtx * I_sqrtx);
-        I_sqrtx = I_sqrtx * (1.5 - x_2 * I_sqrtx * I_sqrtx);
-        I_sqrtx = I_sqrtx * (1.5 - x_2 * I_sqrtx * I_sqrtx);
-        I_sqrtx = I_sqrtx * (1.5 - x_2 * I_sqrtx * I_sqrtx);
-        I_sqrtx = I_sqrtx * (1.5 - x_2 * I_sqrtx * I_sqrtx);
+        //I_sqrtx = I_sqrtx * (1.5 - x_2 * I_sqrtx * I_sqrtx);
+        //I_sqrtx = I_sqrtx * (1.5 - x_2 * I_sqrtx * I_sqrtx);
+        //I_sqrtx = I_sqrtx * (1.5 - x_2 * I_sqrtx * I_sqrtx);
+        //I_sqrtx = I_sqrtx * (1.5 - x_2 * I_sqrtx * I_sqrtx);
+        //I_sqrtx = I_sqrtx * (1.5 - x_2 * I_sqrtx * I_sqrtx);
 
         return I_sqrtx * x;
     }
@@ -869,8 +906,18 @@ class SpeedTest
         {
             throw new ArgumentOutOfRangeException(nameof(x), "Cannot compute the square root of a negative number.");
         }
+        if (x == 0.0m)
+        {
+            return 0.0m;
+        }
         decimal x_2 = x * 0.5m;
         decimal sqrtx = x * 0.1m;
+
+        sqrtx = sqrtx * 0.5m + x_2 / sqrtx;
+        sqrtx = sqrtx * 0.5m + x_2 / sqrtx;
+        sqrtx = sqrtx * 0.5m + x_2 / sqrtx;
+        sqrtx = sqrtx * 0.5m + x_2 / sqrtx;
+        sqrtx = sqrtx * 0.5m + x_2 / sqrtx;
 
         sqrtx = sqrtx * 0.5m + x_2 / sqrtx;
         sqrtx = sqrtx * 0.5m + x_2 / sqrtx;
