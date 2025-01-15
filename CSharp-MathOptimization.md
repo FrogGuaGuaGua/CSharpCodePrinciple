@@ -134,6 +134,31 @@ $a_nx^n +a_{n-1}x^{n-1}+\cdots+a_1x+a_0 = (\cdots ((a_nx+a_{n-1})x+a_{n-2})x+\cd
 
 24). 除非绝对必要(比如要求很高的精度或比long型更大的范围)，否则不要使用decimal型变量，因为其计算耗时是double的几十倍甚至百倍(decimal除法尤其缓慢)。
 
+25). 求正实数的平方根的倒数有快速算法，原理参见[平方根倒数快速算法](https://www.cnblogs.com/oasisyang/p/13207384.html)。
+```C#
+float InvSqrt(float x)
+{
+	float xHalf = 0.5f * x;
+	int i = BitConverter.SingleToInt32Bits(x);
+	i = 0x5f3759df - (i >> 1);
+	x = BitConverter.Int32BitsToSingle(i);
+	x = x * (1.5f - xHalf * x * x);
+	//x = x * (1.5f - xHalf * x * x); //多迭代一次可以提高精度
+	return x;
+}
+
+double InvSqrt(double x)
+{
+	double xHalf = 0.5 * x;
+	long i = BitConverter.DoubleToInt64Bits(x);
+	i = 0x5fe6ec85e7de30daL - (i >> 1);
+	x = BitConverter.Int64BitsToDouble(i);
+	x = x * (1.5 - xHalf * x * x);
+	//x = x * (1.5 - xHalf * x * x); //多迭代一次可以提高精度
+	return x;
+}
+```
+
 
 参考文章：
  * [Writing Faster Managed Code: Know What Things Cost](https://learn.microsoft.com/en-us/previous-versions/dotnet/articles/ms973852(v=msdn.10))  
