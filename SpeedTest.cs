@@ -1122,7 +1122,7 @@ class SpeedTest
     {
         float xHalf = 0.5f * x;
         int i = BitConverter.SingleToInt32Bits(x);
-        i = 0x5f3759df - (i >> 1);
+        i = 0x5f375a86 - (i >> 1); // 0x5f3759df
         x = BitConverter.Int32BitsToSingle(i);
         x = x * (1.5f - xHalf * x * x);
         //x = x * (1.5f - xHalf * x * x); //多迭代一次可以提高精度
@@ -1139,6 +1139,14 @@ class SpeedTest
         //x = x * (1.5 - xHalf * x * x); //多迭代一次可以提高精度
         return x;
     }
-
+    static float TestInvSqrtF(int N)
+    {
+        float sum = 0.0f;
+        for (int i = 0; i < N; i++)
+        {
+            sum += InvSqrtF(i);
+        }
+        return sum;
+    }
 
 }

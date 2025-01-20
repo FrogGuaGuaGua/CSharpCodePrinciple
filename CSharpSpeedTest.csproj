@@ -10,6 +10,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="CSharp-MathOptimization.md" />
     <None Remove="CSharpCodePrinciple%28AboutOptimization%29.md" />
     <None Remove="CSharpCodePrinciple.md" />
   </ItemGroup>
