@@ -54,7 +54,7 @@ class SpeedTest
             3529, 3533, 3539, 3541, 3547, 3557, 3559, 3571, 3581, 3583, 3593, 3607,
             3613, 3617, 3623, 3631, 3637, 3643, 3659, 3671, 3673, 3677, 3691, 3697];
 
-    static void Main()
+    static void Main1()
     {
         int N = 600_000_000;
         //MeasureExecutionTime(() => IntMultiDivide(N), nameof(IntMultiDivide));
