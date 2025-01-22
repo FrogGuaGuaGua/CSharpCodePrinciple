@@ -1,6 +1,4 @@
-﻿using System;
-using System.Diagnostics;
-using static System.Math;
+﻿using System.Diagnostics;
 
 class SpeedTest
 {
@@ -32,8 +30,8 @@ class SpeedTest
         for (int i = 1; i < N; i++)
         {
             sum += MathF.ReciprocalSqrtEstimate(i) + MathF.ReciprocalSqrtEstimate(i + 0.1f) + MathF.ReciprocalSqrtEstimate(i + 0.2f) +
-                   MathF.ReciprocalSqrtEstimate(i + 0.3f) + MathF.ReciprocalSqrtEstimate(i + 0.4f) +  MathF.ReciprocalSqrtEstimate(i + 0.5f) +
-                   MathF.ReciprocalSqrtEstimate(i + 0.6f) + MathF.ReciprocalSqrtEstimate(i + 0.7f) + MathF.ReciprocalSqrtEstimate(i + 0.8f) + 
+                   MathF.ReciprocalSqrtEstimate(i + 0.3f) + MathF.ReciprocalSqrtEstimate(i + 0.4f) + MathF.ReciprocalSqrtEstimate(i + 0.5f) +
+                   MathF.ReciprocalSqrtEstimate(i + 0.6f) + MathF.ReciprocalSqrtEstimate(i + 0.7f) + MathF.ReciprocalSqrtEstimate(i + 0.8f) +
                    MathF.ReciprocalSqrtEstimate(i + 0.9f);
         }
         return sum;
@@ -74,13 +72,24 @@ class SpeedTest
         return sum;
     }
 
+    static float Test1_MathFSqrt(int N)
+    {
+        float sum = 0.0f;
+        for (int i = 1; i < N; i++)
+        {
+            sum += 1.0f / MathF.Sqrt(i) + 1.0f / MathF.Sqrt(i + 0.1f) + 1.0f / MathF.Sqrt(i + 0.2f) + 1.0f / MathF.Sqrt(i + 0.3f) + 1.0f / MathF.Sqrt(i + 0.4f) +
+                   1.0f / MathF.Sqrt(i + 0.5f) + 1.0f / MathF.Sqrt(i + 0.6f) + 1.0f / MathF.Sqrt(i + 0.7f) + 1.0f / MathF.Sqrt(i + 0.8f) + 1.0f / MathF.Sqrt(i + 0.9f);
+        }
+        return sum;
+    }
+
     static double Test1_MathSqrt(int N)
     {
         double sum = 0.0;
         for (int i = 1; i < N; i++)
         {
-            sum += 1.0 / Sqrt(i) + 1.0 / Sqrt(i + 0.1) + 1.0 / Sqrt(i + 0.2) + 1.0 / Sqrt(i + 0.3) + 1.0 / Sqrt(i + 0.4) +
-                   1.0 / Sqrt(i + 0.5) + 1.0 / Sqrt(i + 0.6) + 1.0 / Sqrt(i + 0.7) + 1.0 / Sqrt(i + 0.8) + 1.0 / Sqrt(i + 0.9);
+            sum += 1.0 / Math.Sqrt(i) + 1.0 / Math.Sqrt(i + 0.1) + 1.0 / Math.Sqrt(i + 0.2) + 1.0 / Math.Sqrt(i + 0.3) + 1.0 / Math.Sqrt(i + 0.4) +
+                   1.0 / Math.Sqrt(i + 0.5) + 1.0 / Math.Sqrt(i + 0.6) + 1.0 / Math.Sqrt(i + 0.7) + 1.0 / Math.Sqrt(i + 0.8) + 1.0 / Math.Sqrt(i + 0.9);
         }
         return sum;
     }
@@ -90,14 +99,15 @@ class SpeedTest
         Stopwatch stopwatch = new();
         stopwatch.Start();
         double sum = testFunction();
-        Console.WriteLine($"sum={sum}");
         stopwatch.Stop();
-        Console.WriteLine($"{functionName}: {stopwatch.ElapsedMilliseconds * 0.001:F3}s");
+        Console.WriteLine($"{functionName},  sum = {sum:F6}");
+        Console.WriteLine($"{functionName}, time = {stopwatch.ElapsedMilliseconds * 0.001:F3}s");
+        Console.WriteLine();
     }
 
     static void Main()
     {
-        int N = 90_000_000;
+        int N = 9_000_000;
 
         MeasureExecutionTime(() => TestMathFReciprocalSqrtEstimate(N), nameof(TestMathFReciprocalSqrtEstimate));
         MeasureExecutionTime(() => TestMathReciprocalSqrtEstimate(N), nameof(TestMathReciprocalSqrtEstimate));
@@ -105,6 +115,7 @@ class SpeedTest
         MeasureExecutionTime(() => TestFastInvSqrtF(N), nameof(TestFastInvSqrtF));
         MeasureExecutionTime(() => TestFastInvSqrt(N), nameof(TestFastInvSqrt));
 
+        MeasureExecutionTime(() => Test1_MathFSqrt(N), nameof(Test1_MathFSqrt));
         MeasureExecutionTime(() => Test1_MathSqrt(N), nameof(Test1_MathSqrt));
 
     }
