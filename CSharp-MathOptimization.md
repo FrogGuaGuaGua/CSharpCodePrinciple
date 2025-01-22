@@ -112,9 +112,9 @@ CRC(循环冗余校验)也经常使用查表法加速。
 ```
 该方法实际上就是`Math.Log`的算法的前半部分，用位运算提取了`IEEE 754`浮点数的阶码，而抛弃了尾数的对数，速度大致是Math.Log的4倍，其中，-1022.5 = - 1023 + 0.5，0.693147……就是`ln(2)`，该算法可以保证绝对误差不超过ln(2)/2=0.346573... 但该算法有一个不可忽视的弊端：设 n 为正整数，则对于区间 $[2^{n-1},2^n)$ 内的任意实数，该算法会返回完全一样的结果。以2为底或以10为底的对数函数也可以使用该方法，把最后一行与k相乘的常数换掉即可，以2为底就是return k，以10为底就是return k*0.301029995663981196. 
 
-17). 求正实数的平方根的倒数有快速算法，原理参见[平方根倒数快速算法](https://www.cnblogs.com/oasisyang/p/13207384.html)。
+17). 求正实数的平方根的倒数有快速算法，原理参见[平方根倒数快速算法](https://www.cnblogs.com/oasisyang/p/13207384.html)。速度测试参见[文章](https://zhuanlan.zhihu.com/p/19587782636).
 ```C#
-float InvSqrt(float x)
+float InvSqrt(float x) // 比MathF.ReciprocalSqrtEstimate()更慢，不值得使用
 {
 	float xHalf = 0.5f * x;
 	int i = BitConverter.SingleToInt32Bits(x);
@@ -125,8 +125,8 @@ float InvSqrt(float x)
 	return x;
 }
 
-double InvSqrt(double x)
-{
+double InvSqrt(double x) // 大多数个人电脑的CPU不支持AVX512指令，
+{                        // 该算法比Math.ReciprocalSqrtEstimate()更快，值得使用
 	double xHalf = 0.5 * x;
 	long i = BitConverter.DoubleToInt64Bits(x);
 	i = 0x5fe6ec85e7de30daL - (i >> 1);
